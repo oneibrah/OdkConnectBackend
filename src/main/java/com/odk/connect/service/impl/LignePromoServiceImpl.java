@@ -1,0 +1,171 @@
+package com.odk.connect.service.impl;
+
+import java.util.List;
+import java.util.Optional;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.stereotype.Service;
+
+import com.odk.connect.exception.model.PromotionException;
+import com.odk.connect.exception.model.UsernameExistException;
+import com.odk.connect.model.LignePromotion;
+import com.odk.connect.model.Promotion;
+import com.odk.connect.model.User;
+import com.odk.connect.repository.LignePromoRepository;
+import com.odk.connect.repository.PromotionRepository;
+import com.odk.connect.repository.UserRepository;
+import com.odk.connect.service.LignePromotionService;
+
+import lombok.RequiredArgsConstructor;
+
+@Service
+@RequiredArgsConstructor
+public class LignePromoServiceImpl implements LignePromotionService {
+	private Logger LOGGER = LoggerFactory.getLogger(getClass());
+	private final LignePromoRepository lignePromoRepository;
+	private final PromotionRepository promotionRepository;
+	private final UserRepository userRepository;
+	private LignePromotion lignePromoSaved;
+	int counter = 0;
+
+	@Override
+	public LignePromotion save(LignePromotion lignePromo) throws PromotionException {
+		if (lignePromo == null) {
+			LOGGER.error("impossible d'enregister une ligne de promotion null");
+			throw new PromotionException("impossible d'enregister une ligne de promotion null");
+		}
+		if (lignePromo.getUser() == null || lignePromo.getUser().getId() == null) {
+			LOGGER.error("impossible d'enregistrer une ligne promotion avec un utilisateur null");
+			throw new PromotionException("impossible d'enregistrer une ligne promotion avec un utilisateur null");
+		}
+		if (lignePromo.getPromotion() == null || lignePromo.getPromotion().getId() == null) {
+			LOGGER.error("impossible d'enregistrer une ligne promotion avec une promotion null");
+			throw new PromotionException("impossible d'enregistrer une ligne promotion avec une promotion null");
+		}
+		List<LignePromotion> lignePromoAllUser = lignePromoRepository.findAllByUserId(lignePromo.getUser().getId());
+		if (!lignePromoAllUser.isEmpty()) {
+			lignePromoAllUser.stream().forEach(lig -> {
+				System.out.println(lig.getPromotion().getId());
+				System.out.println(lignePromo.getPromotion().getId());
+				if (lig.getPromotion().getId().equals(lignePromo.getPromotion().getId())) {
+					counter+=1;						
+				}
+			});
+		}
+		if (counter == 0) {
+			lignePromoSaved = lignePromo;
+		} else {
+			counter = 0;
+			throw new PromotionException("cette promotion existe deja pour cet utilisateur");
+		}
+		return lignePromoRepository.save(lignePromoSaved);
+	}
+
+	@Override
+	public LignePromotion update(Long idLignePromo, Long idPromo, Long idUser) throws PromotionException {
+		checkIdPromo(idPromo);
+		checkIdLignePromo(idLignePromo);
+		checkIdUser(idUser);
+		Optional<Promotion> promo = promotionRepository.findById(idPromo);
+		if (promo == null) {
+			throw new UsernameNotFoundException("Aucune promotion n'a été  trouvé avec l'ID " + idPromo);
+		}
+		Optional<User> userOptional = userRepository.findById(idUser);
+		if (userOptional.isEmpty()) {
+			throw new UsernameNotFoundException("Aucun utilisateur n'a été  trouvé avec l'ID " + idUser);
+		}
+		List<LignePromotion> lignePromoAllUser = lignePromoRepository.findAllByUserId(userOptional.get().getId());
+		if (!lignePromoAllUser.isEmpty()) {
+			lignePromoAllUser.stream().forEach(lig -> {
+				System.out.println(lig.getPromotion().getId().equals(promo.get().getId()));
+				if (lig.getPromotion().getId().equals(promo.get().getId())) {
+					counter+=1;					
+				}
+				
+			});
+		}
+		if (counter == 0) {
+			Optional<LignePromotion> lignePromo = findLignePromotion(idLignePromo);
+			LignePromotion lignePromoToSaved = lignePromo.get();
+			lignePromoToSaved.setUser(userOptional.get());
+			lignePromoToSaved.setPromotion(promo.get());
+			lignePromoSaved = lignePromoToSaved;
+		} else {
+			counter = 0;
+			throw new PromotionException("cette promotion existe deja pour cet utilisateur");
+			
+		}
+		
+		return lignePromoRepository.save(lignePromoSaved);
+	}
+
+	@Override
+	public LignePromotion findByLignePromoById(Long idLignePromo) {
+		Optional<LignePromotion> lignePromo = lignePromoRepository.findById(idLignePromo);
+		if (lignePromo.isEmpty()) {
+			LOGGER.error("aucun promotion du ligne promotion n'a été trouvé avec utilisateur l'ID " + idLignePromo);
+		}
+		return lignePromo.get();
+	}
+
+	@Override
+	public List<LignePromotion> findAllLignePromo() {
+		return lignePromoRepository.findAll();
+	}
+
+	@Override
+	public void deleteLignePromo(Long id) {
+		lignePromoRepository.deleteById(id);
+
+	}
+	@Override
+	public List<LignePromotion> findHistoriquePromotion(Long id) throws PromotionException {
+		List<LignePromotion> ligneUserByPromoId = lignePromoRepository.findAllByPromotionId(id);
+		if(ligneUserByPromoId.isEmpty()) {
+			throw new PromotionException("aucun utilisateur du ligne promotion n'a été trouvé avec promotion l'ID " +id);
+		}
+		return ligneUserByPromoId;
+	}
+	@Override
+	public List<LignePromotion> findAllLignesPromotionByPromotionId(Long id) throws PromotionException {
+		List<LignePromotion> lignePromoByUserId = lignePromoRepository.findAllByPromotionId(id);
+		if(lignePromoByUserId.isEmpty()) {
+			throw new PromotionException("aucun ligne promotion n'a été trouvé avec l'ID " +id);
+		}
+		return lignePromoByUserId;
+	}
+
+	private Optional<LignePromotion> findLignePromotion(Long idLignePromo) throws PromotionException {
+		Optional<LignePromotion> LignePromoOptional = lignePromoRepository.findById(idLignePromo);
+		if (LignePromoOptional.isEmpty()) {
+			throw new PromotionException("Aucune ligne de promotion n'a été trouvé avec l'ID " + idLignePromo);
+		}
+		return LignePromoOptional;
+	}
+
+	private void checkIdUser(Long idUser) throws PromotionException {
+		if (idUser == null) {
+			LOGGER.error("L'ID d'utilisateur est nul");
+			throw new PromotionException("impossible de modifier une ligne promotion avec un id utilisateur  null");
+		}
+
+	}
+
+	private void checkIdLignePromo(Long idLignePromo) throws PromotionException {
+		if (idLignePromo == null) {
+			LOGGER.error("impossible de modifier une promotion avec une ligne de promotion null");
+			throw new PromotionException("impossible de modifier une ligne promotion avec une linge promotion null");
+		}
+
+	}
+
+	private void checkIdPromo(Long idPromo) throws PromotionException {
+		if (idPromo == null) {
+			LOGGER.error("impossible de modifier une promotion avec un id null");
+			throw new PromotionException("impossible de modifier une ligne promotion avec un id promotion null");
+		}
+
+	}
+}
