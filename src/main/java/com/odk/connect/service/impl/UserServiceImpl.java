@@ -5,10 +5,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
-import java.util.Arrays;
+import java.util.*;
 import javax.mail.MessagingException;
 import javax.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -438,4 +435,21 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 //		}
 //
 //	}
+
+	@Override
+	public List<Alumni> addAlumni(List<Alumni> alumni) {
+		List<Alumni> list = new ArrayList<>();
+		for(int i=0; i<alumni.size(); i++){
+			System.out.println(alumni.get(i));
+			Alumni part = new Alumni();
+			part.setNom(alumni.get(i).getNom());
+			part.setPrenom(alumni.get(i).getPrenom());
+			part.setEmail(alumni.get(i).getEmail());
+			part.setTelephone(alumni.get(i).getTelephone());
+			part.setAdresse(alumni.get(i).getAdresse());
+			Alumni p = userRepository.saveAndFlush(part);
+			list.add(p);
+		}
+		return list;
+	}
 }

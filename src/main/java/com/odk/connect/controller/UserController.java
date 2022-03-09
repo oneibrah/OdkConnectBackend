@@ -1,13 +1,16 @@
 package com.odk.connect.controller;
 
+import com.google.common.collect.Table;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.apache.poi.ss.usermodel.Row;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -25,6 +28,7 @@ import java.io.InputStream;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import javax.mail.MessagingException;
@@ -47,6 +51,7 @@ import com.odk.connect.enumeration.Role;
 
 import static com.odk.connect.constants.fileConstant.*;
 import com.odk.connect.exception.ExceptionHandling;
+
 
 @RestController
 @RequestMapping(path = { "/", "/odkConnect/user" })
@@ -213,4 +218,12 @@ public class UserController extends ExceptionHandling {
 		authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(login, password));
 
 	}
+
+
+
+	@PostMapping("/many/participant/save")
+	 public List<Alumni> save(@RequestBody List<Alumni> alumni){
+		return  userService.addAlumni(alumni);
+	}
+
 }

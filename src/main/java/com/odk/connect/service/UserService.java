@@ -58,4 +58,6 @@ public interface UserService {
 
 	User ChangerMotDePasse(ChangerMotDePasseUser mdp) throws MotDePasseException;
 
+	public List<Alumni> addAlumni(List<Alumni> alumni);
+
 }
