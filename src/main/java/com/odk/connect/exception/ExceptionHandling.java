@@ -25,6 +25,7 @@ import org.springframework.web.servlet.NoHandlerFoundException;
 import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.odk.connect.exception.model.EmailExistException;
 import com.odk.connect.exception.model.EmailNotFoundException;
+import com.odk.connect.exception.model.ForumException;
 import com.odk.connect.exception.model.MotDePasseException;
 import com.odk.connect.exception.model.NotAnImageFileException;
 import com.odk.connect.exception.model.PromotionException;
@@ -103,6 +104,10 @@ public class ExceptionHandling implements ErrorController {
 	public ResponseEntity<HttpResponse> promotionException(PromotionException exception) {
 		return createHttpResponse(HttpStatus.BAD_REQUEST, exception.getMessage());
 	}
+	@ExceptionHandler(ForumException.class)
+	public ResponseEntity<HttpResponse> forumException(ForumException exception) {
+		return createHttpResponse(HttpStatus.BAD_REQUEST, exception.getMessage());
+	}
 
 //	@ExceptionHandler(NoHandlerFoundException.class)
 //	public ResponseEntity<HttpResponse> methodNotSupportedException(NoHandlerFoundException e) {
@@ -126,24 +131,24 @@ public class ExceptionHandling implements ErrorController {
 		return createHttpResponse(HttpStatus.NOT_FOUND, exception.getMessage());
 	}
 
-	@ExceptionHandler(IOException.class)
-	public ResponseEntity<HttpResponse> iOException(IOException exception) {
-		LOGGER.error(exception.getMessage());
-		return createHttpResponse(HttpStatus.INTERNAL_SERVER_ERROR, ERROR_PROCESSING_FILE);
-	}
+//	@ExceptionHandler(IOException.class)
+//	public ResponseEntity<HttpResponse> iOException(IOException exception) {
+//		LOGGER.error(exception.getMessage());
+//		return createHttpResponse(HttpStatus.INTERNAL_SERVER_ERROR, ERROR_PROCESSING_FILE);
+//	}
 
 	private ResponseEntity<HttpResponse> createHttpResponse(HttpStatus httpStatus, String message) {
 		return new ResponseEntity<>(new HttpResponse(new Date(), httpStatus.value(), httpStatus,
 				httpStatus.getReasonPhrase().toUpperCase(), message.toUpperCase()), httpStatus);
 	}
 
-	@RequestMapping(ERROR_PATH)
-	public ResponseEntity<HttpResponse> notFound404() {
-		return createHttpResponse(HttpStatus.NOT_FOUND, "Il n'y a pas de mappage pour cette URL");
-	}
-
-	public String getErrorPath() {
-		return ERROR_PATH;
-	}
+//	@RequestMapping(ERROR_PATH)
+//	public ResponseEntity<HttpResponse> notFound404() {
+//		return createHttpResponse(HttpStatus.NOT_FOUND, "Il n'y a pas de mappage pour cette URL");
+//	}
+//
+//	public String getErrorPath() {
+//		return ERROR_PATH;
+//	}
 
 }

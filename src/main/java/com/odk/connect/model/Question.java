@@ -14,8 +14,9 @@ import javax.persistence.*;
 public class Question {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long Id;
-    private String Desciption;
+    private Long id;
+    private String description;
+    private String photoUrl;
     @ManyToOne
     private CategoryForum categoryForum;
     @ManyToOne

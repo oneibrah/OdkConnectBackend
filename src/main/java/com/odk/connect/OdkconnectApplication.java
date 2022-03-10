@@ -20,6 +20,9 @@ public class OdkconnectApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(OdkconnectApplication.class, args);
 		new File(USER_FOLDER).mkdirs();
+		new File(CATEGORY_FOLDER).mkdirs();
+		new File(QUIZ_FOLDER).mkdirs();
+		new File(RESPONSE_FOLDER).mkdirs();
 	}
 	@Bean
 	public CorsFilter corsFilter() {

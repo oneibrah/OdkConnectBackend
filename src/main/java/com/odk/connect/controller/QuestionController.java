@@ -1,26 +1,53 @@
 package com.odk.connect.controller;
 
+import com.odk.connect.exception.ExceptionHandling;
+import com.odk.connect.exception.model.ForumException;
+import com.odk.connect.exception.model.NotAnImageFileException;
 import com.odk.connect.model.Question;
-import com.odk.connect.repository.QuestionRepository;
 import com.odk.connect.service.QuestionService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.List;
+import static com.odk.connect.constants.fileConstant.*;
+import static com.odk.connect.constants.fileConstant.CATEGORY_FOLDER;
+import static com.odk.connect.constants.fileConstant.FORWARD_SLASH;
+import static org.springframework.http.HttpStatus.*;
+import static org.springframework.http.MediaType.IMAGE_JPEG_VALUE;
+
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
-@CrossOrigin
+
 @RestController
-@RequestMapping("/odkConnect/question/")
-public class QuestionController {
+@RequestMapping("/odkConnect/forum/quiz")
+@RequiredArgsConstructor
+public class QuestionController extends ExceptionHandling {
+	private final QuestionService quizService;
+	@PostMapping("/saveQuizForum")
+	ResponseEntity<Question> ajouterQuestion(@RequestParam("description") String description,
+			@RequestParam("idUser") Long idUser, @RequestParam("idCat") Long idCategory,
+			@RequestParam(value = "quizImage", required = false) MultipartFile quizImage)
+			throws ForumException, IOException, NotAnImageFileException {
+		Question quiz = quizService.ajouterQuestion(description, idUser, idCategory, quizImage);
+		return new ResponseEntity<Question>(quiz,OK);
+	}
+	@GetMapping("/listQuizForum")
+	public ResponseEntity<List<Question>> getAllCateForum() {
+		List<Question> quizForum = quizService.getAllQuizForum();
+		return new ResponseEntity<List<Question>>(quizForum, OK);
+	}
+	@GetMapping("/listQuizForum/{idCat}")
+	public ResponseEntity<List<Question>> getAllQuizByCatForum(@PathVariable("idCat") Long id) throws ForumException {
+		List<Question> quizByCatForum = quizService.findAllQuizByCategorie(id);
+		return new ResponseEntity<List<Question>>(quizByCatForum, OK);
+	}
+	@GetMapping(path = "/image/{username}/{fileName}", produces = IMAGE_JPEG_VALUE)
+	public byte[] getQuizImage(@PathVariable("username") String username, @PathVariable("fileName") String fileName)
+			throws IOException {
+		return Files.readAllBytes(Paths.get(QUIZ_FOLDER + username + FORWARD_SLASH + fileName));
+	}
 
-
-
-    @Autowired
-    QuestionService questionService;
-
-    @PostMapping("ajouter")
-    public Question ajouter(@RequestBody Question question){
-        return questionService.ajouterQuestion(question);
-    }
-    @DeleteMapping("supprimer/{id}")
-    Void supprimer(@PathVariable("id") Long id){
-        return questionService.supprimerQuestion(id);}
 }

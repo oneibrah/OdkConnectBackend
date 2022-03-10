@@ -11,5 +11,11 @@ public class fileConstant {
 	public static final String DOT = ".";
 	public static final String FORWARD_SLASH = "/";
 	public static final String TEMP_PROFILE_IMAGE_BASE_URL = "https://robohash.org/";
+	public static final String CATEGORY_IMAGE_PATH = "/odkConnect/forum/category/image/";
+	public static final String CATEGORY_FOLDER = System.getProperty("user.home") + "/OdkConnect/forum/category/";
+	public static final String QUIZ_IMAGE_PATH = "/odkConnect/forum/quiz/image/";
+	public static final String QUIZ_FOLDER = System.getProperty("user.home") + "/OdkConnect/forum/quiz/";
+	public static final String RESPONSE_IMAGE_PATH = "/odkConnect/forum/response/image/";
+	public static final String RESPONSE_FOLDER = System.getProperty("user.home") + "/OdkConnect/forum/response/";
 
 }
