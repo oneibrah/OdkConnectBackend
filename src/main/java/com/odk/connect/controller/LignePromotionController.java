@@ -20,6 +20,8 @@ import com.odk.connect.exception.ExceptionHandling;
 import com.odk.connect.exception.model.PromotionException;
 import com.odk.connect.model.HttpResponse;
 import com.odk.connect.model.LignePromotion;
+import com.odk.connect.model.Promotion;
+import com.odk.connect.model.User;
 import com.odk.connect.service.LignePromotionService;
 import com.odk.connect.service.PromotionService;
 
@@ -46,13 +48,13 @@ public class LignePromotionController extends ExceptionHandling{
 	ResponseEntity<List<LignePromotion>> findAllLignePromo(){
 		return ResponseEntity.ok(lignePromoService.findAllLignePromo());
 	}
-	@GetMapping("/user/lignePromotions/{idUser}")
-	ResponseEntity<List<LignePromotion>> findHistoriquePromotion(@PathVariable("idUser") Long idUser) throws PromotionException {
-		return ResponseEntity.ok(lignePromoService.findHistoriquePromotion(idUser));
+	@GetMapping("/promotion/lignePromotions/{idUser}")
+	ResponseEntity<List<Promotion>>findAllPromotionByUserId(@PathVariable("idUser") Long idUser) throws PromotionException {
+		return ResponseEntity.ok(lignePromoService.findAllPromotionByUserId(idUser));
 	}
-	@GetMapping("/promotion/lignePromotions/{idPromo}")
-	ResponseEntity<List<LignePromotion>> findAllLignesPromotionByPromotionId(@PathVariable("idPromo") Long idPromo) throws PromotionException {
-		return ResponseEntity.ok(lignePromoService.findAllLignesPromotionByPromotionId(idPromo));
+	@GetMapping("/user/lignePromotions/{idPromo}")
+	ResponseEntity<List<User>> findAllUserByPromotionId(@PathVariable("idPromo") Long idPromo) throws PromotionException {
+		return ResponseEntity.ok(lignePromoService.findAllUserByPromotionId(idPromo));
 	}
 	@DeleteMapping("deleteLignePromo")
 	@PreAuthorize("hasAnyAuthority('promotion:delete')")

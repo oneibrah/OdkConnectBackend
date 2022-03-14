@@ -246,7 +246,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 		}
 		User user = userRepository.findUserByLogin(login);
 		Path userFolder = Paths.get(USER_FOLDER + user.getLogin()).toAbsolutePath().normalize();
-		FileUtils.deleteDirectory(new File(userFolder.toString()));
+		FileUtils.deleteDirectory(new File(userFolder.toString()));	
 		userRepository.deleteById(user.getId());
 
 	}

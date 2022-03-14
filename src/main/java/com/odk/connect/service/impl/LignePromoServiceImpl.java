@@ -1,5 +1,6 @@
 package com.odk.connect.service.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -121,20 +122,28 @@ public class LignePromoServiceImpl implements LignePromotionService {
 
 	}
 	@Override
-	public List<LignePromotion> findHistoriquePromotion(Long id) throws PromotionException {
-		List<LignePromotion> ligneUserByPromoId = lignePromoRepository.findAllByPromotionId(id);
+	public List<Promotion> findAllPromotionByUserId(Long id) throws PromotionException {
+		List<LignePromotion> ligneUserByPromoId = lignePromoRepository.findAllByUserId(id);
 		if(ligneUserByPromoId.isEmpty()) {
 			throw new PromotionException("aucun utilisateur du ligne promotion n'a été trouvé avec promotion l'ID " +id);
 		}
-		return ligneUserByPromoId;
+		List<Promotion>promo = new ArrayList<Promotion>();
+		ligneUserByPromoId.stream().forEach(l->{
+			promo.add(l.getPromotion());
+		});
+		return promo;
 	}
 	@Override
-	public List<LignePromotion> findAllLignesPromotionByPromotionId(Long id) throws PromotionException {
+	public List<User> findAllUserByPromotionId(Long id) throws PromotionException {
 		List<LignePromotion> lignePromoByUserId = lignePromoRepository.findAllByPromotionId(id);
 		if(lignePromoByUserId.isEmpty()) {
 			throw new PromotionException("aucun ligne promotion n'a été trouvé avec l'ID " +id);
 		}
-		return lignePromoByUserId;
+		List<User>user = new ArrayList<User>();
+		lignePromoByUserId.stream().forEach(l->{
+			user.add(l.getUser());
+		});
+		return user;
 	}
 
 	private Optional<LignePromotion> findLignePromotion(Long idLignePromo) throws PromotionException {
