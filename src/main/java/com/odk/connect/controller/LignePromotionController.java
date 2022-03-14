@@ -63,6 +63,10 @@ public class LignePromotionController extends ExceptionHandling{
 		return response(HttpStatus.OK, "ligne promotion supprimé avec succès");
 		
 	}
+	@PostMapping("ajouteruserpromo")
+	LignePromotion ajouter(@RequestBody LignePromotion lignePromotion) {
+		return lignePromoService.ajouterlignepromo(lignePromotion);
+	}
 	private ResponseEntity<HttpResponse> response(HttpStatus httpStatus, String message) {
 		HttpResponse body = new HttpResponse(new Date(), httpStatus.value(), httpStatus,
 				httpStatus.getReasonPhrase().toUpperCase(), message.toUpperCase());
@@ -71,9 +75,6 @@ public class LignePromotionController extends ExceptionHandling{
 
 
 
-	@PostMapping("ajouteruserpromo")
-	LignePromotion ajouter(@RequestBody LignePromotion lignePromotion) {
-		return lignePromoService.ajouterlignepromo(lignePromotion);
-	}
+	
 
 }
