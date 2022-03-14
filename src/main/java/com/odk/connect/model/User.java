@@ -32,8 +32,8 @@ import lombok.NoArgsConstructor;
 public class User {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
-	@Column(nullable = false, updatable = false)
-	@JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+	//@Column(nullable = false, updatable = false)
+	//@JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
 	private Long id;
 	private String userId;
 	private String nom;

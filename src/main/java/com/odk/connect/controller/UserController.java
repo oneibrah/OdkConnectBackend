@@ -221,7 +221,7 @@ public class UserController extends ExceptionHandling {
 
 
 
-	@PostMapping("/many/participant/save")
+	@PostMapping("/many/alumni/save")
 	 public List<Alumni> save(@RequestBody List<Alumni> alumni){
 		return  userService.addAlumni(alumni);
 	}

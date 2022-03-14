@@ -14,4 +14,6 @@ public interface LignePromotionService {
 	 List<LignePromotion>findAllLignesPromotionByPromotionId(Long id) throws PromotionException;
 	void deleteLignePromo(Long id);
 
+
+	public LignePromotion ajouterlignepromo(LignePromotion lignePromotion);
 }

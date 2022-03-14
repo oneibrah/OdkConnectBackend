@@ -168,4 +168,10 @@ public class LignePromoServiceImpl implements LignePromotionService {
 		}
 
 	}
+
+
+
+	public  LignePromotion ajouterlignepromo(LignePromotion lignePromotion){
+		return lignePromoRepository.save(lignePromotion);
+	}
 }

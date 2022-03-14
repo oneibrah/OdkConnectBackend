@@ -67,4 +67,11 @@ public class LignePromotionController extends ExceptionHandling{
 		return new ResponseEntity<HttpResponse>(body, httpStatus);
 	}
 
+
+
+	@PostMapping("ajouteruserpromo")
+	LignePromotion ajouter(@RequestBody LignePromotion lignePromotion) {
+		return lignePromoService.ajouterlignepromo(lignePromotion);
+	}
+
 }
