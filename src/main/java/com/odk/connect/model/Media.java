@@ -9,6 +9,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 
 @Entity
 @AllArgsConstructor
@@ -17,8 +18,10 @@ import javax.persistence.Id;
 public class Media {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long Id;
-    private String nom;
-
-
+    private Long id;
+    private String titre;
+    private String fileName;
+    private String photoUrl;
+    @ManyToOne
+    private User user;
 }

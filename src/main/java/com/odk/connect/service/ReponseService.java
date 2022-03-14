@@ -9,9 +9,13 @@ import com.odk.connect.model.Reponse;
 
 public interface ReponseService {
 
-	Reponse ajouterReponse(String description, Long idUser, Long idQuiz, MultipartFile responseImage) throws ForumException, IOException, NotAnImageFileException;
+	Reponse ajouterReponse(String description, Long idUser, Long idQuiz, MultipartFile responseImage)
+			throws ForumException, IOException, NotAnImageFileException;
 
 	List<Reponse> findAllReponseByQuizId(Long id) throws ForumException;
 
-	Void supprimerReponse(Long id);
+	Reponse updateResponse(Long idResponse, String description, MultipartFile responseImage)
+			throws ForumException, IOException, NotAnImageFileException;
+
+	void supprimerReponse(Long id);
 }

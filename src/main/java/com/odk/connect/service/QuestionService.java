@@ -15,5 +15,6 @@ public interface QuestionService {
     Question ajouterQuestion(String description, Long idUser, Long idCategory, MultipartFile quizImage) throws ForumException, IOException, NotAnImageFileException;
     List<Question>getAllQuizForum();
     List<Question>findAllQuizByCategorie(Long id) throws ForumException;
-    Void supprimerQuestion(Long id);
+    Question updateQuiz(Long idQuiz, String description, MultipartFile quizImage)throws ForumException, IOException, NotAnImageFileException;
+    void supprimerQuestion(Long id) throws ForumException;
 }

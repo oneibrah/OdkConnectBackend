@@ -23,4 +23,5 @@ public class Reponse {
 	private Question quiz;
 	@ManyToOne
 	private User user;
+	
 }

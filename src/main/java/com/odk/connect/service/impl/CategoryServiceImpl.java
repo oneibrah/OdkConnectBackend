@@ -11,8 +11,10 @@ import java.util.Optional;
 import com.odk.connect.exception.model.ForumException;
 import com.odk.connect.exception.model.NotAnImageFileException;
 import com.odk.connect.model.CategoryForum;
+import com.odk.connect.model.Question;
 import com.odk.connect.model.User;
 import com.odk.connect.repository.CategoryRepository;
+import com.odk.connect.repository.QuestionRepository;
 import com.odk.connect.repository.UserRepository;
 import com.odk.connect.service.CategoryService;
 import lombok.RequiredArgsConstructor;
@@ -34,6 +36,7 @@ public class CategoryServiceImpl implements CategoryService {
 	private Logger LOGGER = LoggerFactory.getLogger(getClass());
 	private final CategoryRepository categoryRepository;
 	private final UserRepository userRepository;
+	private final QuestionRepository quizRepository;
 
 //	public CategoryForum ajouterCategory(CategoryForum category) throws ForumException {
 //		if(category == null) {
@@ -94,8 +97,12 @@ public class CategoryServiceImpl implements CategoryService {
 	}
 
 	@Override
-	public Void supprimerCategory(Long id) {
-		return null;
+	public void supprimerCategory(Long id) throws ForumException {
+		List<Question>quiz = quizRepository.findAllByCategoryForumId(id);
+		if(!quiz.isEmpty()) {
+			throw new ForumException("impossible de supprimer une categorie avec des questions");
+		}
+		categoryRepository.deleteById(id);
 	}
 
 //	private String getTempraryProfileIamgeUrl(String login) {

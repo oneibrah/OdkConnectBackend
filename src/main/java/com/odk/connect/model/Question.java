@@ -4,7 +4,12 @@ package com.odk.connect.model;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.util.List;
+
 import javax.persistence.*;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 
 @Entity
@@ -21,4 +26,7 @@ public class Question {
     private CategoryForum categoryForum;
     @ManyToOne
     private User user;
+//    @OneToMany(mappedBy = "quiz")
+//    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+//    private List<Reponse>reponses;
 }

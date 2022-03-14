@@ -13,5 +13,5 @@ import com.odk.connect.model.CategoryForum;
 public interface CategoryService {
     CategoryForum ajouterCategory(String libelle,Long idUser,MultipartFile categoryImage) throws ForumException, IOException, NotAnImageFileException;
     List<CategoryForum>getAllCateforum();
-    Void supprimerCategory(Long id);
+    void supprimerCategory(Long id) throws ForumException;
 }

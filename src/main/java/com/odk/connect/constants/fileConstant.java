@@ -17,5 +17,7 @@ public class fileConstant {
 	public static final String QUIZ_FOLDER = System.getProperty("user.home") + "/OdkConnect/forum/quiz/";
 	public static final String RESPONSE_IMAGE_PATH = "/odkConnect/forum/response/image/";
 	public static final String RESPONSE_FOLDER = System.getProperty("user.home") + "/OdkConnect/forum/response/";
+	public static final String MEDIA_IMAGE_PATH = "/odkConnect/media/image/";
+	public static final String MEDIA_FOLDER = System.getProperty("user.home") + "/OdkConnect/media/";
 
 }

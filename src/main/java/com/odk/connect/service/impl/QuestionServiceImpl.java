@@ -4,9 +4,11 @@ import com.odk.connect.exception.model.ForumException;
 import com.odk.connect.exception.model.NotAnImageFileException;
 import com.odk.connect.model.CategoryForum;
 import com.odk.connect.model.Question;
+import com.odk.connect.model.Reponse;
 import com.odk.connect.model.User;
 import com.odk.connect.repository.CategoryRepository;
 import com.odk.connect.repository.QuestionRepository;
+import com.odk.connect.repository.ReponseRepository;
 import com.odk.connect.repository.UserRepository;
 import com.odk.connect.service.QuestionService;
 import lombok.RequiredArgsConstructor;
@@ -41,6 +43,7 @@ public class QuestionServiceImpl implements QuestionService {
 	private final QuestionRepository quizRepository;
 	private final CategoryRepository categoryRepository;
 	private final UserRepository userRepository;
+	private final ReponseRepository responseRepository;
 
 	@Override
 	public Question ajouterQuestion(String description, Long idUser, Long idCategory, MultipartFile quizImage)
@@ -58,28 +61,45 @@ public class QuestionServiceImpl implements QuestionService {
 		Question quiz = new Question();
 		quiz.setDescription(description);
 		quiz.setCategoryForum(cat.get());
-		quiz.setUser(user.get());
+		quiz.setUser(user.get());		
 		quizRepository.save(quiz);
 		saveQuestionImage(quiz, quizImage);
 		return quiz;
+	}
+	@Override
+	public Question updateQuiz(Long idQuiz, String description,MultipartFile quizImage)
+			throws ForumException, IOException, NotAnImageFileException {
+		Optional<Question> quizUpdate = quizRepository.findById(idQuiz);
+		if(quizUpdate.isEmpty()) {
+			LOGGER.error("Aucune question n'a été trouvé dans la BDD avec l'ID " + idQuiz);
+			throw new ForumException("impossible de modifier une question non enregistée dans la base de données");
+		}
+		quizUpdate.get().setDescription(description);
+		quizRepository.save(quizUpdate.get());
+		saveQuestionImage(quizUpdate.get(), quizImage);
+		return quizUpdate.get();
 	}
 
 	@Override
 	public List<Question> getAllQuizForum() {
 		return quizRepository.findAll();
 	}
+	
 
 	@Override
-	public Void supprimerQuestion(Long id) {
-		// TODO Auto-generated method stub
-		return null;
+	public void supprimerQuestion(Long id) throws ForumException {
+		List<Reponse> response = responseRepository.findAllReponseByQuizId(id);
+		if(!response.isEmpty()) {
+			throw new ForumException("impossible de supprimer une question repondue");
+		}
+		quizRepository.deleteById(id);		
 	}
 
 	@Override
 	public List<Question> findAllQuizByCategorie(Long id) throws ForumException {
 		List<Question> quizCat = quizRepository.findAllByCategoryForumId(id);
 		if(quizCat.isEmpty()) {
-			throw new ForumException("Impossible de recuperer des questions pour une categorie non existant");
+			throw new ForumException("Aucune question n'existe pour cette categorie");
 		}
 		return quizCat;
 	}
@@ -94,8 +114,8 @@ public class QuestionServiceImpl implements QuestionService {
 			if (!Files.exists(userFolder)) {
 				Files.createDirectories(userFolder);
 				LOGGER.info(DIRECTORY_CREATED + userFolder);
-			}
-			String fileNameWithOutExt = FilenameUtils.removeExtension(quizImage.getOriginalFilename());
+			}			
+			String fileNameWithOutExt = FilenameUtils.removeExtension(quizImage.getOriginalFilename());			
 			Files.copy(quizImage.getInputStream(), userFolder.resolve(fileNameWithOutExt + DOT + JPG_EXTENSION));
 			quiz.setPhotoUrl(ServletUriComponentsBuilder.fromCurrentContextPath().path(QUIZ_IMAGE_PATH
 					+ quiz.getUser().getLogin() + FORWARD_SLASH + fileNameWithOutExt + DOT + JPG_EXTENSION)
@@ -104,6 +124,6 @@ public class QuestionServiceImpl implements QuestionService {
 			LOGGER.info(FILE_SAVED_IN_FILE_SYSTEM + quizImage.getOriginalFilename());
 		}
 
-	}
+	}		
 
 }

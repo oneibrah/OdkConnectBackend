@@ -23,6 +23,7 @@ public class OdkconnectApplication {
 		new File(CATEGORY_FOLDER).mkdirs();
 		new File(QUIZ_FOLDER).mkdirs();
 		new File(RESPONSE_FOLDER).mkdirs();
+		new File(MEDIA_FOLDER).mkdirs();
 	}
 	@Bean
 	public CorsFilter corsFilter() {
