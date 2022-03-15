@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.odk.connect.exception.ExceptionHandling;
 import com.odk.connect.exception.model.PromotionException;
+import com.odk.connect.model.Alumni;
 import com.odk.connect.model.HttpResponse;
 import com.odk.connect.model.LignePromotion;
 import com.odk.connect.model.Promotion;
@@ -55,6 +56,10 @@ public class LignePromotionController extends ExceptionHandling{
 	@GetMapping("/user/lignePromotions/{idPromo}")
 	ResponseEntity<List<User>> findAllUserByPromotionId(@PathVariable("idPromo") Long idPromo) throws PromotionException {
 		return ResponseEntity.ok(lignePromoService.findAllUserByPromotionId(idPromo));
+	}
+	@GetMapping("/Alumni/lignePromotions/{idPromo}")
+	ResponseEntity<List<User>> findAllAlumniByPromotionId(@PathVariable("idPromo") Long idPromo) throws PromotionException {
+		return ResponseEntity.ok(lignePromoService.findAllALumniByPromotionId(idPromo));
 	}
 	@DeleteMapping("deleteLignePromo")
 	@PreAuthorize("hasAnyAuthority('promotion:delete')")

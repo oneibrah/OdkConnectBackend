@@ -3,6 +3,7 @@ package com.odk.connect.service;
 import java.util.List;
 
 import com.odk.connect.exception.model.PromotionException;
+import com.odk.connect.model.Alumni;
 import com.odk.connect.model.LignePromotion;
 import com.odk.connect.model.Promotion;
 import com.odk.connect.model.User;
@@ -20,8 +21,9 @@ public interface LignePromotionService {
 
 	List<User> findAllUserByPromotionId(Long id) throws PromotionException;
 
-	void deleteLignePromo(Long id);
+	List<User> findAllALumniByPromotionId(Long id) throws PromotionException;
 
+	void deleteLignePromo(Long id);
 
 	public LignePromotion ajouterlignepromo(LignePromotion lignePromotion);
 }

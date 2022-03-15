@@ -108,7 +108,7 @@ public class UserController extends ExceptionHandling {
 			@RequestParam("isNonLocked") String isNonLocked,
 			@RequestParam(value = "profileImage", required = false) MultipartFile profileImage)
 			throws UserNotFoundException, EmailExistException, IOException, UsernameExistException,
-			NotAnImageFileException {
+			NotAnImageFileException, MessagingException {
 		User newUser = userService.addNewUser(prenom, nom, login, email, adresse, telephone, role,
 				Boolean.parseBoolean(isActive), Boolean.parseBoolean(isNonLocked), profileImage);
 		return new ResponseEntity<User>(newUser, OK);

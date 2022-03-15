@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 
 import com.odk.connect.enumeration.Role;
@@ -18,5 +19,7 @@ public interface UserRepository extends JpaRepository<User, Long>{
 	@Query(value="select u from Alumni u where u.login = :login ")
 	Alumni findUserAlumniByLogin(String login);
 	List<User> findByRole(String role);
+	
+	
 
 }

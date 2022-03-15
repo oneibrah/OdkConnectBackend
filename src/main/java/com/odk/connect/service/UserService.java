@@ -37,7 +37,7 @@ public interface UserService {
 	User addNewUser(String prenom, String nom, String login, String email, String adresse, String telephone,
 			String role,boolean isActive, boolean isNotLocked, MultipartFile profileImage)
 			throws UserNotFoundException, EmailExistException, UsernameExistException, IOException,
-			NotAnImageFileException;
+			NotAnImageFileException, MessagingException;
 
 	Alumni addNewAlumni(String prenom, String nom, String login, String email, String adresse, String telephone, 
 			String profession, String role, boolean isActive, boolean isNotLocked, MultipartFile profileImage)

@@ -183,7 +183,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 	public User addNewUser(String prenom, String nom, String login, String email, String adresse, String telephone,
 			String role, boolean isActive, boolean isNotLocked, MultipartFile profileImage)
 			throws UserNotFoundException, EmailExistException, UsernameExistException, IOException,
-			NotAnImageFileException {
+			NotAnImageFileException, MessagingException {
 		validateNewUsernameAndEmail(EMPTY, login, email);
 //		validateAlumniNewUsernameAndEmail(EMPTY, login, email);
 		User user = new User();
@@ -204,6 +204,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 		user.setProfileImageUrl(getTempraryProfileIamgeUrl(login));
 		userRepository.save(user);
 		saveProfileImage(user, profileImage);
+		emailService.sendNewPasswordEmail(prenom, password, email);
 		LOGGER.info("New user password: " + password);
 		return user;
 	}
@@ -447,8 +448,15 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 			part.setEmail(alumni.get(i).getEmail());
 			part.setTelephone(alumni.get(i).getTelephone());
 			part.setAdresse(alumni.get(i).getAdresse());
-			Alumni p = userRepository.saveAndFlush(part);
-			list.add(p);
+			part.setUserId(generateUserId());						
+			part.setRole(Role.ROLE_ALUM.name());
+			part.setAuthorities(Role.ROLE_ALUM.getAuthorities());
+			part.setProfileImageUrl(getTempraryProfileIamgeUrl(alumni.get(i).getNom()));
+			Alumni alumByEmail = userRepository.findUserALumniByEmail(part.getEmail());
+			if(alumByEmail == null) {
+				Alumni p = userRepository.saveAndFlush(part);
+				list.add(p);
+			}			
 		}
 		return list;
 	}

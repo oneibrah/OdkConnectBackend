@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import com.odk.connect.exception.model.PromotionException;
 import com.odk.connect.exception.model.UsernameExistException;
+import com.odk.connect.model.Alumni;
 import com.odk.connect.model.LignePromotion;
 import com.odk.connect.model.Promotion;
 import com.odk.connect.model.User;
@@ -145,6 +146,22 @@ public class LignePromoServiceImpl implements LignePromotionService {
 		});
 		return user;
 	}
+	public  LignePromotion ajouterlignepromo(LignePromotion lignePromotion){
+		return lignePromoRepository.save(lignePromotion);
+	}
+
+	@Override
+	public List<User> findAllALumniByPromotionId(Long id) throws PromotionException {
+		List<LignePromotion> lignePromoByUserId = lignePromoRepository.findAllByAlumByPromotionId(id);
+		if(lignePromoByUserId.isEmpty()) {
+			throw new PromotionException("aucun alumni n'est associé à cette promotion");
+		}
+		List<User>user = new ArrayList<User>();
+		lignePromoByUserId.stream().forEach(l->{
+			user.add(l.getUser());
+		});
+		return user;
+	}
 
 	private Optional<LignePromotion> findLignePromotion(Long idLignePromo) throws PromotionException {
 		Optional<LignePromotion> LignePromoOptional = lignePromoRepository.findById(idLignePromo);
@@ -177,10 +194,5 @@ public class LignePromoServiceImpl implements LignePromotionService {
 		}
 
 	}
-
-
-
-	public  LignePromotion ajouterlignepromo(LignePromotion lignePromotion){
-		return lignePromoRepository.save(lignePromotion);
-	}
+	
 }
