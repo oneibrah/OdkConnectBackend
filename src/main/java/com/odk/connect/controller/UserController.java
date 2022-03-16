@@ -127,7 +127,6 @@ public class UserController extends ExceptionHandling {
 		Alumni alum = userService.addNewAlumni(prenom, nom, login, email, profession, adresse, telephone, role,
 				Boolean.parseBoolean(isActive), Boolean.parseBoolean(isNonLocked), profileImage);
 		return new ResponseEntity<Alumni>(alum, OK);
-
 	}
 
 	@PostMapping("/updateUser")
@@ -147,6 +146,11 @@ public class UserController extends ExceptionHandling {
 	@GetMapping("/findUser/{username}")
 	public ResponseEntity<User> getUser(@PathVariable("username") String username) {
 		User user = userService.findUserByUsername(username);
+		return new ResponseEntity<User>(user, OK);
+	}
+	@GetMapping("/findUserById/{id}")
+	public ResponseEntity<User> getUserById(@PathVariable("id") Long id) {
+		User user = userService.getUserById(id);
 		return new ResponseEntity<User>(user, OK);
 	}
 

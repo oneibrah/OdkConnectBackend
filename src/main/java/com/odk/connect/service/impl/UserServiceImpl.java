@@ -238,6 +238,14 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 		saveProfileImage(alum, profileImage);
 		return alum;
 	}
+	@Override
+	public User getUserById(Long id) {
+		Optional<User> user = userRepository.findById(id);
+		if(user.isEmpty()) {
+			throw new UsernameNotFoundException(NO_USER_FOUND_BY_ID);
+		}
+		return user.get();
+	}
 
 	@Override
 	public void deleteUser(String login) throws IOException, UsernameExistException {
@@ -452,7 +460,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 			part.setRole(Role.ROLE_ALUM.name());
 			part.setAuthorities(Role.ROLE_ALUM.getAuthorities());
 			part.setProfileImageUrl(getTempraryProfileIamgeUrl(alumni.get(i).getNom()));
-			Alumni alumByEmail = userRepository.findUserALumniByEmail(part.getEmail());
+			User alumByEmail = userRepository.findUserByEmail(part.getEmail());
 			if(alumByEmail == null) {
 				Alumni p = userRepository.saveAndFlush(part);
 				list.add(p);
@@ -460,4 +468,5 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 		}
 		return list;
 	}
+
 }

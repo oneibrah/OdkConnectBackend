@@ -29,6 +29,7 @@ public interface UserService {
 
 	List<User> getUsers();
 	List<User>getUsersByRole(String role) throws UserNotFoundException;
+	User getUserById(Long id);
 
 	User findUserByUsername(String Username);
 

@@ -9,7 +9,7 @@ import com.odk.connect.model.Promotion;
 import com.odk.connect.model.User;
 
 public interface LignePromotionService {
-	LignePromotion save(LignePromotion lignePromo) throws PromotionException;
+	LignePromotion save(Long idUser, Long idPromo) throws PromotionException;
 
 	LignePromotion update(Long idLignePromo, Long idPromo, Long idUser) throws PromotionException;
 

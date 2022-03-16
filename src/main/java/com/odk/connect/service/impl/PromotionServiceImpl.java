@@ -80,7 +80,7 @@ public class PromotionServiceImpl implements PromotionService {
 	}
 
 	@Override
-	public Promotion findById(Long id) throws PromotionException {
+	public Promotion findPromotionById(Long id) throws PromotionException {
 		Promotion promodb = promotionRepository.findById(id).get();
 		if (promodb == null) {
 			throw new PromotionException(PROMO_NOT_FOUND_BY_ID + id);

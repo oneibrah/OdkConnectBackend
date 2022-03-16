@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import org.apache.xmlbeans.impl.xb.xsdschema.Attribute.Use;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -33,24 +34,25 @@ public class LignePromoServiceImpl implements LignePromotionService {
 	int counter = 0;
 
 	@Override
-	public LignePromotion save(LignePromotion lignePromo) throws PromotionException {
-		if (lignePromo == null) {
-			LOGGER.error("impossible d'enregister une ligne de promotion null");
-			throw new PromotionException("impossible d'enregister une ligne de promotion null");
+	public LignePromotion save(Long idUser, Long idPromo) throws PromotionException {
+		Optional<Promotion> promotion = promotionRepository.findById(idPromo);
+		Optional<User> user = userRepository.findById(idUser);
+		if (promotion.isEmpty()) {
+			LOGGER.error("impossible d'enregister une ligne de promotion avec une promotion vide");
+			throw new PromotionException("impossible d'enregister une ligne de promotion avec une promotion vide");
+		}		
+		if (user.isEmpty()) {
+			LOGGER.error("impossible d'enregistrer une ligne promotion avec un utilisateur vide");
+			throw new PromotionException("impossible d'enregistrer une ligne promotion avec un utilisateur vide");
 		}
-		if (lignePromo.getUser() == null || lignePromo.getUser().getId() == null) {
-			LOGGER.error("impossible d'enregistrer une ligne promotion avec un utilisateur null");
-			throw new PromotionException("impossible d'enregistrer une ligne promotion avec un utilisateur null");
-		}
-		if (lignePromo.getPromotion() == null || lignePromo.getPromotion().getId() == null) {
-			LOGGER.error("impossible d'enregistrer une ligne promotion avec une promotion null");
-			throw new PromotionException("impossible d'enregistrer une ligne promotion avec une promotion null");
-		}
+		LignePromotion lignePromo = new LignePromotion();
+		lignePromo.setUser(user.get());
+		lignePromo.setPromotion(promotion.get());
 		List<LignePromotion> lignePromoAllUser = lignePromoRepository.findAllByUserId(lignePromo.getUser().getId());
 		if (!lignePromoAllUser.isEmpty()) {
 			lignePromoAllUser.stream().forEach(lig -> {
-				System.out.println(lig.getPromotion().getId());
-				System.out.println(lignePromo.getPromotion().getId());
+//				System.out.println(lig.getPromotion().getId());
+//				System.out.println(lignePromo.getPromotion().getId());
 				if (lig.getPromotion().getId().equals(lignePromo.getPromotion().getId())) {
 					counter+=1;						
 				}

@@ -1,5 +1,7 @@
 package com.odk.connect.controller;
 
+import static org.springframework.http.HttpStatus.OK;
+
 import java.util.Date;
 import java.util.List;
 
@@ -14,6 +16,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.odk.connect.exception.ExceptionHandling;
@@ -34,8 +37,9 @@ import lombok.RequiredArgsConstructor;
 public class LignePromotionController extends ExceptionHandling{
 	private final LignePromotionService lignePromoService;
 	@PostMapping("/saveLignePromo")
-	ResponseEntity<LignePromotion> save(@RequestBody LignePromotion lignePromo) throws PromotionException{
-		return ResponseEntity.ok(lignePromoService.save(lignePromo));
+	ResponseEntity<LignePromotion> save(@RequestParam("idUser") Long idUser, @RequestParam("idPromo") Long idPromo) throws PromotionException{
+		LignePromotion ligPromo = lignePromoService.save(idUser, idPromo);
+		return new ResponseEntity<LignePromotion>(ligPromo, OK);
 	}
 	@PutMapping("/updateLignePromo/{idLignePromo}/{idPromo}/{idUser}")
 	ResponseEntity<LignePromotion> update(@PathVariable("idLignePromo") Long idLignePromo,@PathVariable("idPromo") Long idPromo,@PathVariable("idUser") Long idUser) throws PromotionException{

@@ -43,7 +43,7 @@ public class PromotionController extends ExceptionHandling {
 
 	@GetMapping("/promoById/{id}")
 	ResponseEntity<Promotion> findById(@PathVariable("id") Long id) throws PromotionException {
-		return ResponseEntity.ok(promoService.findById(id));
+		return ResponseEntity.ok(promoService.findPromotionById(id));
 
 	}
 
