@@ -25,6 +25,7 @@ import static org.springframework.http.MediaType.IMAGE_JPEG_VALUE;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -51,7 +52,6 @@ import com.odk.connect.enumeration.Role;
 
 import static com.odk.connect.constants.fileConstant.*;
 import com.odk.connect.exception.ExceptionHandling;
-
 
 @RestController
 @RequestMapping(path = { "/", "/odkConnect/user" })
@@ -118,13 +118,13 @@ public class UserController extends ExceptionHandling {
 	@PostMapping("/saveAlumni")
 	public ResponseEntity<Alumni> addNewAlumni(@RequestParam("prenom") String prenom, @RequestParam("nom") String nom,
 			@RequestParam("login") String login, @RequestParam("email") String email,
-			@RequestParam("profession") String profession, @RequestParam("adresse") String adresse,
-			@RequestParam("telephone") String telephone, @RequestParam("role") String role,
+			@RequestParam("adresse") String adresse, @RequestParam("telephone") String telephone,
+			@RequestParam("profession") String profession, @RequestParam("role") String role,
 			@RequestParam("isActive") String isActive, @RequestParam("isNonLocked") String isNonLocked,
 			@RequestParam(value = "profileImage", required = false) MultipartFile profileImage)
 			throws UserNotFoundException, EmailExistException, IOException, UsernameExistException,
 			NotAnImageFileException {
-		Alumni alum = userService.addNewAlumni(prenom, nom, login, email, profession, adresse, telephone, role,
+		Alumni alum = userService.addNewAlumni(prenom, nom, login, email, adresse, telephone, profession, role,
 				Boolean.parseBoolean(isActive), Boolean.parseBoolean(isNonLocked), profileImage);
 		return new ResponseEntity<Alumni>(alum, OK);
 	}
@@ -138,9 +138,23 @@ public class UserController extends ExceptionHandling {
 			@RequestParam(value = "profileImage", required = false) MultipartFile profileImage)
 			throws UserNotFoundException, EmailExistException, IOException, UsernameExistException,
 			NotAnImageFileException {
-		User updateUser = userService.updateUser(currentUsername, prenom, nom, login, email, adresse, telephone,role,
+		User updateUser = userService.updateUser(currentUsername, prenom, nom, login, email, adresse, telephone, role,
 				Boolean.parseBoolean(isActive), Boolean.parseBoolean(isNonLocked), profileImage);
 		return new ResponseEntity<User>(updateUser, OK);
+	}
+
+	@PostMapping("/updateAlumni")
+	public ResponseEntity<Alumni> updateAlumni(@RequestParam("currentUsername") String currentUsername,
+			@RequestParam("prenom") String prenom, @RequestParam("nom") String nom, @RequestParam("login") String login,
+			@RequestParam("email") String email, @RequestParam("adresse") String adresse,
+			@RequestParam("telephone") String telephone, @RequestParam("role") String role,
+			@RequestParam("isActive") String isActive, @RequestParam("isNonLocked") String isNonLocked,
+			@RequestParam(value = "profileImage", required = false) MultipartFile profileImage,
+			@RequestParam("profession") String profession) throws UserNotFoundException, EmailExistException,
+			IOException, UsernameExistException, NotAnImageFileException {
+		Alumni updateUser = userService.updateAlumni(currentUsername, prenom, nom, login, email, adresse, telephone, role,
+				Boolean.parseBoolean(isActive), Boolean.parseBoolean(isNonLocked), profileImage,profession);
+		return new ResponseEntity<Alumni>(updateUser, OK);
 	}
 
 	@GetMapping("/findUser/{username}")
@@ -148,6 +162,7 @@ public class UserController extends ExceptionHandling {
 		User user = userService.findUserByUsername(username);
 		return new ResponseEntity<User>(user, OK);
 	}
+
 	@GetMapping("/findUserById/{id}")
 	public ResponseEntity<User> getUserById(@PathVariable("id") Long id) {
 		User user = userService.getUserById(id);
@@ -159,11 +174,13 @@ public class UserController extends ExceptionHandling {
 		List<User> users = userService.getUsers();
 		return new ResponseEntity<List<User>>(users, OK);
 	}
+
 	@GetMapping("/listUsersByRole/{role}")
 	public ResponseEntity<List<User>> getUsersByRole(@PathVariable("role") String role) throws UserNotFoundException {
 		List<User> users = userService.getUsersByRole(role);
 		return new ResponseEntity<List<User>>(users, OK);
 	}
+
 	@GetMapping("/resetpassword/{email}")
 	public ResponseEntity<HttpResponse> resetPassword(@PathVariable("email") String email)
 			throws EmailNotFoundException, MessagingException {
@@ -171,9 +188,26 @@ public class UserController extends ExceptionHandling {
 		return response(OK, EMAIL_SENT + ": " + email);
 	}
 
+	@GetMapping("/subscribeUserByEmail/{email}")
+	public ResponseEntity<HttpResponse> subscribeUserByEmail(@PathVariable("email") String email)
+			throws EmailNotFoundException, MessagingException, MalformedURLException {
+		URL url = new URL("http://localhost:4200/inscrire");
+		userService.subscribeUserByEmail(url, email);
+		return response(OK, EMAIL_SENT + ": " + email);
+	}
+
+	@GetMapping("/subscribeAlumByEmail/{email}")
+	public ResponseEntity<HttpResponse> subscribeAlumByEmail(@PathVariable("email") String email)
+			throws EmailNotFoundException, MessagingException, MalformedURLException {
+		URL url = new URL("http://localhost:4200/inscrire/alumni");
+		userService.subscribeUserByEmail(url, email);
+		return response(OK, EMAIL_SENT + ": " + email);
+	}
+
 	@DeleteMapping("/delete/{login}")
 	@PreAuthorize("hasAnyAuthority('user:delete')")
-	public ResponseEntity<HttpResponse> deleteUser(@PathVariable("login") String login) throws IOException, UsernameExistException {
+	public ResponseEntity<HttpResponse> deleteUser(@PathVariable("login") String login)
+			throws IOException, UsernameExistException {
 		userService.deleteUser(login);
 		return response(OK, USER_DELETED_SUCCESSFULLY);
 	}
@@ -206,6 +240,11 @@ public class UserController extends ExceptionHandling {
 		return byteArrayOutputStream.toByteArray();
 	}
 
+	@PostMapping("/many/alumni/save")
+	public List<Alumni> save(@RequestBody List<Alumni> alumni) {
+		return userService.addAlumni(alumni);
+	}
+
 	private ResponseEntity<HttpResponse> response(HttpStatus httpStatus, String message) {
 		HttpResponse body = new HttpResponse(new Date(), httpStatus.value(), httpStatus,
 				httpStatus.getReasonPhrase().toUpperCase(), message.toUpperCase());
@@ -221,13 +260,6 @@ public class UserController extends ExceptionHandling {
 	private void authenticate(String login, String password) {
 		authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(login, password));
 
-	}
-
-
-
-	@PostMapping("/many/alumni/save")
-	 public List<Alumni> save(@RequestBody List<Alumni> alumni){
-		return  userService.addAlumni(alumni);
 	}
 
 }

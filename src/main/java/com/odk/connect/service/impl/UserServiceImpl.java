@@ -2,6 +2,7 @@ package com.odk.connect.service.impl;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -103,7 +104,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 	}
 
 	@Override
-	public Alumni registerAlum(String login, String email, String adresse, String telephone, String Profession)
+	public Alumni registerAlum(String Profession, String login, String email, String adresse, String telephone)
 			throws UserNotFoundException, UsernameExistException, EmailExistException, MessagingException,
 			EmailNotFoundException {
 		Alumni userAlum = userRepository.findUserALumniByEmail(email);
@@ -111,10 +112,10 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 			throw new EmailNotFoundException(NO_USER_FOUND_BY_EMAIL);
 		}
 		validateNewUsernameAndEmail(EMPTY, login, email);
-		userAlum.setUserId(generateUserId());
+//		userAlum.setUserId(generateUserId());
 		String password = generatePassword();
-		userAlum.setPrenom(userAlum.getPrenom());
-		userAlum.setNom(userAlum.getNom());
+//		userAlum.setPrenom(userAlum.getPrenom());
+//		userAlum.setNom(userAlum.getNom());
 		userAlum.setLogin(login);
 		userAlum.setEmail(email);
 		userAlum.setProfession(Profession);
@@ -124,12 +125,12 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 		userAlum.setPassword(encodePassword(password));
 		userAlum.setActive(true);
 		userAlum.setNonLocked(true);
-		userAlum.setRole(ROLE_ALUM.name());
-		userAlum.setAuthorities(ROLE_ALUM.getAuthorities());
-		userAlum.setProfileImageUrl(getTempraryProfileIamgeUrl(login));
+//		userAlum.setRole(ROLE_ALUM.name());
+//		userAlum.setAuthorities(ROLE_ALUM.getAuthorities());
+//		userAlum.setProfileImageUrl(getTempraryProfileIamgeUrl(login));
 		userRepository.save(userAlum);
 		LOGGER.info("New user password: " + password);
-		emailService.sendNewPasswordEmail(userAlum.getPrenom(), password, email);
+//		emailService.sendNewPasswordEmail(userAlum.getPrenom(), password, email);
 		return userAlum;
 	}
 
@@ -149,6 +150,28 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 		currentUser.setNonLocked(isNotLocked);
 		currentUser.setRole(getRoleEnumName(role).name());
 		currentUser.setAuthorities(getRoleEnumName(role).getAuthorities());
+//		currentUser.setProfileImageUrl(getTempraryProfileIamgeUrl(newUsername));
+		userRepository.save(currentUser);
+		saveProfileImage(currentUser, profileImage);
+		return currentUser;
+	}
+	@Override
+	public Alumni updateAlumni(String currentUsername, String newFirstName, String newLastName, String newUsername,
+			String newEmail, String adresse, String telephone, String role, boolean isActive, boolean isNotLocked,
+			MultipartFile profileImage,String profession) throws UserNotFoundException, EmailExistException, UsernameExistException,
+			IOException, NotAnImageFileException {
+		Alumni currentUser = validateAlumniNewUsernameAndEmail(currentUsername, newUsername, newEmail);
+		currentUser.setPrenom(newFirstName);
+		currentUser.setNom(newLastName);
+		currentUser.setLogin(newUsername);
+		currentUser.setEmail(newEmail);
+		currentUser.setActive(isActive);
+		currentUser.setAdresse(adresse);
+		currentUser.setTelephone(telephone);
+		currentUser.setNonLocked(isNotLocked);
+		currentUser.setRole(getRoleEnumName(role).name());
+		currentUser.setAuthorities(getRoleEnumName(role).getAuthorities());
+		currentUser.setProfession(profession);
 //		currentUser.setProfileImageUrl(getTempraryProfileIamgeUrl(newUsername));
 		userRepository.save(currentUser);
 		saveProfileImage(currentUser, profileImage);
@@ -238,10 +261,11 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 		saveProfileImage(alum, profileImage);
 		return alum;
 	}
+
 	@Override
 	public User getUserById(Long id) {
 		Optional<User> user = userRepository.findById(id);
-		if(user.isEmpty()) {
+		if (user.isEmpty()) {
 			throw new UsernameNotFoundException(NO_USER_FOUND_BY_ID);
 		}
 		return user.get();
@@ -249,13 +273,13 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
 	@Override
 	public void deleteUser(String login) throws IOException, UsernameExistException {
-		List<LignePromotion>lignePromo = lignePromoRepository.findAllByUserLogin(login);
-		if(!lignePromo.isEmpty()) {
+		List<LignePromotion> lignePromo = lignePromoRepository.findAllByUserLogin(login);
+		if (!lignePromo.isEmpty()) {
 			throw new UsernameExistException("impossible de supprimer un utilisateur avec une ligne de promotion");
 		}
 		User user = userRepository.findUserByLogin(login);
 		Path userFolder = Paths.get(USER_FOLDER + user.getLogin()).toAbsolutePath().normalize();
-		FileUtils.deleteDirectory(new File(userFolder.toString()));	
+		FileUtils.deleteDirectory(new File(userFolder.toString()));
 		userRepository.deleteById(user.getId());
 
 	}
@@ -278,6 +302,16 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 		user.setPassword(encodePassword(password));
 		userRepository.save(user);
 		emailService.sendNewPasswordEmail(user.getPrenom(), password, user.getEmail());
+	}
+
+	@Override
+	public void subscribeUserByEmail(URL url, String email) throws MessagingException, EmailNotFoundException {
+//		User user = userRepository.findUserByEmail(email);
+//		if (user == null) {
+//			throw new EmailNotFoundException(NO_USER_FOUND_BY_EMAIL + email);
+//		}
+		emailService.sendNewSubscribeEmail(url, email);
+
 	}
 
 	@Override
@@ -415,40 +449,40 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 		return Role.valueOf(role.toUpperCase());
 	}
 
-//	private User validateAlumniNewUsernameAndEmail(String currentUsername, String newUsername, String newEmail)
-//			throws EmailExistException, UsernameExistException, UserNotFoundException {
-//		Alumni userByNewUsername = userRepository.findUserAlumniByLogin(newUsername);
-//		Alumni userByNewEmail = userRepository.findUserALumniByEmail(newEmail);
-//		if (isNotBlank(currentUsername)) {
-//			Alumni currentUser = userRepository.findUserAlumniByLogin(currentUsername);
-//			if (currentUser == null) {
-//				throw new UserNotFoundException(NO_USER_FOUND_BY_USERNAME + currentUsername);
-//			}
-//
-//			if (userByNewUsername != null && !currentUser.getId().equals(userByNewUsername.getId())) {
-//				throw new UsernameExistException(USERNAME_ALREADY_EXISTS);
-//			}
-//
-//			if (userByNewEmail != null && !currentUser.getId().equals(userByNewEmail.getId())) {
-//				throw new EmailExistException(EMAIL_ALREADY_EXISTS);
-//			}
-//			return currentUser;
-//		} else {
-//			if (userByNewUsername != null) {
-//				throw new UsernameExistException(USERNAME_ALREADY_EXISTS);
-//			}
-//			if (userByNewEmail != null) {
-//				throw new EmailExistException(EMAIL_ALREADY_EXISTS);
-//			}
-//			return null;
-//		}
-//
-//	}
+	private Alumni validateAlumniNewUsernameAndEmail(String currentUsername, String newUsername, String newEmail)
+			throws EmailExistException, UsernameExistException, UserNotFoundException {
+		Alumni userByNewUsername = userRepository.findUserAlumniByLogin(newUsername);
+		Alumni userByNewEmail = userRepository.findUserALumniByEmail(newEmail);
+		if (isNotBlank(currentUsername)) {
+			Alumni currentUser = userRepository.findUserAlumniByLogin(currentUsername);
+			if (currentUser == null) {
+				throw new UserNotFoundException(NO_USER_FOUND_BY_USERNAME + currentUsername);
+			}
+
+			if (userByNewUsername != null && !currentUser.getId().equals(userByNewUsername.getId())) {
+				throw new UsernameExistException(USERNAME_ALREADY_EXISTS);
+			}
+
+			if (userByNewEmail != null && !currentUser.getId().equals(userByNewEmail.getId())) {
+				throw new EmailExistException(EMAIL_ALREADY_EXISTS);
+			}
+			return currentUser;
+		} else {
+			if (userByNewUsername != null) {
+				throw new UsernameExistException(USERNAME_ALREADY_EXISTS);
+			}
+			if (userByNewEmail != null) {
+				throw new EmailExistException(EMAIL_ALREADY_EXISTS);
+			}
+			return null;
+		}
+
+	}
 
 	@Override
 	public List<Alumni> addAlumni(List<Alumni> alumni) {
 		List<Alumni> list = new ArrayList<>();
-		for(int i=0; i<alumni.size(); i++){
+		for (int i = 0; i < alumni.size(); i++) {
 			System.out.println(alumni.get(i));
 			Alumni part = new Alumni();
 			part.setNom(alumni.get(i).getNom());
@@ -456,15 +490,15 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 			part.setEmail(alumni.get(i).getEmail());
 			part.setTelephone(alumni.get(i).getTelephone());
 			part.setAdresse(alumni.get(i).getAdresse());
-			part.setUserId(generateUserId());						
-			part.setRole(Role.ROLE_ALUM.name());
-			part.setAuthorities(Role.ROLE_ALUM.getAuthorities());
+			part.setUserId(generateUserId());
+			part.setRole(ROLE_ALUM.name());
+			part.setAuthorities(ROLE_ALUM.getAuthorities());
 			part.setProfileImageUrl(getTempraryProfileIamgeUrl(alumni.get(i).getNom()));
 			User alumByEmail = userRepository.findUserByEmail(part.getEmail());
-			if(alumByEmail == null) {
+			if (alumByEmail == null) {
 				Alumni p = userRepository.saveAndFlush(part);
 				list.add(p);
-			}			
+			}
 		}
 		return list;
 	}

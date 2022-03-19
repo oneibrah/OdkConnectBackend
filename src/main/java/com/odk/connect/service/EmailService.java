@@ -1,5 +1,6 @@
 package com.odk.connect.service;
 
+import java.net.URL;
 import java.util.Date;
 import java.util.Properties;
 
@@ -23,6 +24,14 @@ public class EmailService {
 		smtpTransport.close();
 	}
 
+	public void sendNewSubscribeEmail(URL url, String email) throws MessagingException {
+		Message subscribeMessage = createSubcribeEmail(url, email);
+		SMTPTransport smtpTransport = (SMTPTransport) getEmailSession().getTransport(SIMPLE_MAIL_TRANSFERT_PROTOCOL);
+		smtpTransport.connect(GMAIL_SMTP_SERVER, USERNAME, PASSWORD);
+		smtpTransport.sendMessage(subscribeMessage, subscribeMessage.getAllRecipients());
+		smtpTransport.close();
+	}
+
 	private Message createEmail(String prenom, String password, String email) throws MessagingException {
 		Message message = new MimeMessage(getEmailSession());
 		message.setFrom(new InternetAddress(FROM_EMAIL));
@@ -34,6 +43,20 @@ public class EmailService {
 		message.setSentDate(new Date());
 		message.saveChanges();
 		return message;
+	}
+
+	private Message createSubcribeEmail(URL url, String email) throws MessagingException {
+		Message subscribeMessage = new MimeMessage(getEmailSession());
+		subscribeMessage.setFrom(new InternetAddress(FROM_EMAIL));
+		subscribeMessage.setRecipients(TO, InternetAddress.parse(email, false));
+		subscribeMessage.setRecipients(CC, InternetAddress.parse(CC_EMAIL, false));
+		subscribeMessage.setSubject(EMAIL_SUBJECTS);
+		subscribeMessage.setText("Bonjour "
+				+ ", \n \n cliquez sur le lien pour vous inscrire sur la plateforme  des alumnis de Orange digital Kalanso : "
+				+ url + "\n \n OdkConnect team");
+		subscribeMessage.setSentDate(new Date());
+		subscribeMessage.saveChanges();
+		return subscribeMessage;
 	}
 
 	private Session getEmailSession() {

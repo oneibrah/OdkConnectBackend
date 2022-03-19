@@ -164,7 +164,18 @@ public class LignePromoServiceImpl implements LignePromotionService {
 		});
 		return user;
 	}
-
+	@Override
+	public List<User> findAllFormateurByPromotionId(Long id) throws PromotionException {
+		List<LignePromotion> lignePromoByUserId = lignePromoRepository.findAllFormateurByPromotionId(id);
+//		if(lignePromoByUserId.isEmpty()) {
+//			throw new PromotionException("aucun formateur n'est associé à cette promotion");
+//		}
+		List<User>user = new ArrayList<User>();
+		lignePromoByUserId.stream().forEach(l->{
+			user.add(l.getUser());
+		});
+		return user;
+	}
 	private Optional<LignePromotion> findLignePromotion(Long idLignePromo) throws PromotionException {
 		Optional<LignePromotion> LignePromoOptional = lignePromoRepository.findById(idLignePromo);
 		if (LignePromoOptional.isEmpty()) {

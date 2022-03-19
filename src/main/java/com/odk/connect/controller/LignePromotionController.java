@@ -41,8 +41,8 @@ public class LignePromotionController extends ExceptionHandling{
 		LignePromotion ligPromo = lignePromoService.save(idUser, idPromo);
 		return new ResponseEntity<LignePromotion>(ligPromo, OK);
 	}
-	@PutMapping("/updateLignePromo/{idLignePromo}/{idPromo}/{idUser}")
-	ResponseEntity<LignePromotion> update(@PathVariable("idLignePromo") Long idLignePromo,@PathVariable("idPromo") Long idPromo,@PathVariable("idUser") Long idUser) throws PromotionException{
+	@PutMapping("/updateLignePromo")
+	ResponseEntity<LignePromotion> update(@RequestParam("idLignePromo") Long idLignePromo,@RequestParam("idPromo") Long idPromo,@RequestParam("idUser") Long idUser) throws PromotionException{
 		return ResponseEntity.ok(lignePromoService.update(idLignePromo, idPromo, idUser));
 	}
 	@GetMapping("/lignePromotions/{idLignePromo}")
@@ -64,6 +64,10 @@ public class LignePromotionController extends ExceptionHandling{
 	@GetMapping("/Alumni/lignePromotions/{idPromo}")
 	ResponseEntity<List<User>> findAllAlumniByPromotionId(@PathVariable("idPromo") Long idPromo) throws PromotionException {
 		return ResponseEntity.ok(lignePromoService.findAllALumniByPromotionId(idPromo));
+	}
+	@GetMapping("/Formateur/lignePromotions/{idPromo}")
+	ResponseEntity<List<User>> findAllFormateurByPromotionId(@PathVariable("idPromo") Long idPromo) throws PromotionException {
+		return ResponseEntity.ok(lignePromoService.findAllFormateurByPromotionId(idPromo));
 	}
 	@DeleteMapping("deleteLignePromo")
 	@PreAuthorize("hasAnyAuthority('promotion:delete')")

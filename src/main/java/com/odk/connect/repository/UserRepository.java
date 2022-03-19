@@ -10,7 +10,7 @@ import com.odk.connect.model.User;
 @RepositoryRestResource
 public interface UserRepository extends JpaRepository<User, Long>{
 	User findUserByLogin(String login);
-//	@Query("select u from User u where u.role = '!ROLE_ALUM' and u.email = :email")
+//	@Query("select u from User u where u.role <> 'ROLE_ALUM' and u.email = :email")
 	User findUserByEmail(@Param("email") String email);
 	@Query(value="select u from Alumni u where u.email = :email ")
 	Alumni findUserALumniByEmail(String email);
