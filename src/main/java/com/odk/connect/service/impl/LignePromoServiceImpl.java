@@ -73,17 +73,18 @@ public class LignePromoServiceImpl implements LignePromotionService {
 		checkIdLignePromo(idLignePromo);
 		checkIdUser(idUser);
 		Optional<Promotion> promo = promotionRepository.findById(idPromo);
-		if (promo == null) {
+		if (promo.isEmpty()) {
 			throw new UsernameNotFoundException("Aucune promotion n'a été  trouvé avec l'ID " + idPromo);
 		}
 		Optional<User> userOptional = userRepository.findById(idUser);
+		
 		if (userOptional.isEmpty()) {
 			throw new UsernameNotFoundException("Aucun utilisateur n'a été  trouvé avec l'ID " + idUser);
 		}
 		List<LignePromotion> lignePromoAllUser = lignePromoRepository.findAllByUserId(userOptional.get().getId());
 		if (!lignePromoAllUser.isEmpty()) {
 			lignePromoAllUser.stream().forEach(lig -> {
-				System.out.println(lig.getPromotion().getId().equals(promo.get().getId()));
+//				System.out.println(lig.getPromotion().getId().equals(promo.get().getId()));
 				if (lig.getPromotion().getId().equals(promo.get().getId())) {
 					counter+=1;					
 				}
@@ -136,6 +137,7 @@ public class LignePromoServiceImpl implements LignePromotionService {
 		});
 		return promo;
 	}
+	
 	@Override
 	public List<User> findAllUserByPromotionId(Long id) throws PromotionException {
 		List<LignePromotion> lignePromoByUserId = lignePromoRepository.findAllByPromotionId(id);
@@ -165,17 +167,29 @@ public class LignePromoServiceImpl implements LignePromotionService {
 		return user;
 	}
 	@Override
-	public List<User> findAllFormateurByPromotionId(Long id) throws PromotionException {
+	public List<LignePromotion> findAllFormateurByPromotionId(Long id) throws PromotionException {
 		List<LignePromotion> lignePromoByUserId = lignePromoRepository.findAllFormateurByPromotionId(id);
 //		if(lignePromoByUserId.isEmpty()) {
 //			throw new PromotionException("aucun formateur n'est associé à cette promotion");
 //		}
-		List<User>user = new ArrayList<User>();
-		lignePromoByUserId.stream().forEach(l->{
-			user.add(l.getUser());
-		});
-		return user;
+//		List<User>user = new ArrayList<User>();
+//		lignePromoByUserId.stream().forEach(l->{
+//			user.add(l.getUser());
+//		});
+		return lignePromoByUserId;
 	}
+//	@Override
+//	public List<User> findAllFormateurByPromotionIdNot(Long id) throws PromotionException {
+//		List<LignePromotion> lignePromoByUserId = lignePromoRepository.findAllFormateurByPromotionIdNot(id);
+////		if(lignePromoByUserId.isEmpty()) {
+////			throw new PromotionException("aucun formateur n'est associé à cette promotion");
+////		}
+//		List<User>user = new ArrayList<User>();
+//		lignePromoByUserId.stream().forEach(l->{
+//			user.add(l.getUser());
+//		});
+//		return user;
+//	}
 	private Optional<LignePromotion> findLignePromotion(Long idLignePromo) throws PromotionException {
 		Optional<LignePromotion> LignePromoOptional = lignePromoRepository.findById(idLignePromo);
 		if (LignePromoOptional.isEmpty()) {

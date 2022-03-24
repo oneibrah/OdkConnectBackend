@@ -23,7 +23,8 @@ public interface LignePromotionService {
 
 	List<User> findAllALumniByPromotionId(Long id) throws PromotionException;
 
-	List<User> findAllFormateurByPromotionId(Long id) throws PromotionException;
+	List<LignePromotion> findAllFormateurByPromotionId(Long id) throws PromotionException;
+//	List<User> findAllFormateurByPromotionIdNot(Long id) throws PromotionException;
 
 	void deleteLignePromo(Long id);
 

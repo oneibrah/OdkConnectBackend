@@ -111,11 +111,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 		if (userAlum == null) {
 			throw new EmailNotFoundException(NO_USER_FOUND_BY_EMAIL);
 		}
-		validateNewUsernameAndEmail(EMPTY, login, email);
-//		userAlum.setUserId(generateUserId());
 		String password = generatePassword();
-//		userAlum.setPrenom(userAlum.getPrenom());
-//		userAlum.setNom(userAlum.getNom());
 		userAlum.setLogin(login);
 		userAlum.setEmail(email);
 		userAlum.setProfession(Profession);
@@ -125,12 +121,9 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 		userAlum.setPassword(encodePassword(password));
 		userAlum.setActive(true);
 		userAlum.setNonLocked(true);
-//		userAlum.setRole(ROLE_ALUM.name());
-//		userAlum.setAuthorities(ROLE_ALUM.getAuthorities());
-//		userAlum.setProfileImageUrl(getTempraryProfileIamgeUrl(login));
 		userRepository.save(userAlum);
 		LOGGER.info("New user password: " + password);
-//		emailService.sendNewPasswordEmail(userAlum.getPrenom(), password, email);
+		emailService.sendNewPasswordEmail(userAlum.getPrenom(), password, email);
 		return userAlum;
 	}
 
@@ -160,6 +153,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 			String newEmail, String adresse, String telephone, String role, boolean isActive, boolean isNotLocked,
 			MultipartFile profileImage,String profession) throws UserNotFoundException, EmailExistException, UsernameExistException,
 			IOException, NotAnImageFileException {
+//		Alumni currentUser = userRepository.findUserALumniByEmail(newEmail);
 		Alumni currentUser = validateAlumniNewUsernameAndEmail(currentUsername, newUsername, newEmail);
 		currentUser.setPrenom(newFirstName);
 		currentUser.setNom(newLastName);
@@ -204,7 +198,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
 	@Override
 	public User addNewUser(String prenom, String nom, String login, String email, String adresse, String telephone,
-			String role, boolean isActive, boolean isNotLocked, MultipartFile profileImage)
+			String role, boolean isActive, MultipartFile profileImage)
 			throws UserNotFoundException, EmailExistException, UsernameExistException, IOException,
 			NotAnImageFileException, MessagingException {
 		validateNewUsernameAndEmail(EMPTY, login, email);
@@ -221,7 +215,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 		user.setTelephone(telephone);
 		user.setPassword(encodePassword(password));
 		user.setActive(isActive);
-		user.setNonLocked(isNotLocked);
+		user.setNonLocked(true);
 		user.setRole(getRoleEnumName(role).name());
 		user.setAuthorities(getRoleEnumName(role).getAuthorities());
 		user.setProfileImageUrl(getTempraryProfileIamgeUrl(login));
@@ -234,9 +228,9 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
 	@Override
 	public Alumni addNewAlumni(String prenom, String nom, String login, String email, String adresse, String telephone,
-			String profession, String role, boolean isActive, boolean isNotLocked, MultipartFile profileImage)
+			String profession, String role, boolean isActive,MultipartFile profileImage)
 			throws UserNotFoundException, EmailExistException, UsernameExistException, IOException,
-			NotAnImageFileException {
+			NotAnImageFileException, MessagingException {
 //		validateAlumniNewUsernameAndEmail(EMPTY, login, email);
 		validateNewUsernameAndEmail(EMPTY, login, email);
 		Alumni alum = new Alumni();
@@ -251,7 +245,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 		alum.setTelephone(telephone);
 		alum.setPassword(encodePassword(password));
 		alum.setActive(isActive);
-		alum.setNonLocked(isNotLocked);
+		alum.setNonLocked(true);
 		alum.setProfession(profession);
 		alum.setRole(getRoleEnumName(role).name());
 		alum.setAuthorities(getRoleEnumName(role).getAuthorities());
@@ -259,6 +253,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 		LOGGER.info("New user password: " + password);
 		userRepository.save(alum);
 		saveProfileImage(alum, profileImage);
+		emailService.sendNewPasswordEmail(prenom, password, email);
 		return alum;
 	}
 

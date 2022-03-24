@@ -37,14 +37,14 @@ public interface UserService {
 	User findUserByEmail(String email);
 
 	User addNewUser(String prenom, String nom, String login, String email, String adresse, String telephone,
-			String role, boolean isActive, boolean isNotLocked, MultipartFile profileImage)
+			String role, boolean isActive,MultipartFile profileImage)
 			throws UserNotFoundException, EmailExistException, UsernameExistException, IOException,
 			NotAnImageFileException, MessagingException;
 
 	Alumni addNewAlumni(String prenom, String nom, String login, String email, String adresse, String telephone,
-			String profession, String role, boolean isActive, boolean isNotLocked, MultipartFile profileImage)
+			String profession, String role, boolean isActive,MultipartFile profileImage)
 			throws UserNotFoundException, EmailExistException, UsernameExistException, IOException,
-			NotAnImageFileException;
+			NotAnImageFileException, MessagingException;
 
 	User updateUser(String currentUsername, String newFirstName, String newLastName, String newUsername,
 			String newEmail, String adresse, String telephone, String role, boolean isActive, boolean isNotLocked,

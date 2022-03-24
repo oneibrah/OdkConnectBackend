@@ -1,16 +1,12 @@
 package com.odk.connect.controller;
 
-import com.google.common.collect.Table;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.apache.poi.ss.usermodel.Row;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -29,7 +25,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import javax.mail.MessagingException;
@@ -48,8 +43,6 @@ import com.odk.connect.model.UserPrincipal;
 import com.odk.connect.service.UserService;
 import com.odk.connect.utility.JwtTokenProvider;
 import com.odk.connect.constants.SecurityConstant;
-import com.odk.connect.enumeration.Role;
-
 import static com.odk.connect.constants.fileConstant.*;
 import com.odk.connect.exception.ExceptionHandling;
 
@@ -57,7 +50,7 @@ import com.odk.connect.exception.ExceptionHandling;
 @RequestMapping(path = { "/", "/odkConnect/user" })
 public class UserController extends ExceptionHandling {
 	public static final String EMAIL_SENT = "Un e-mail avec un nouveau mot de passe a été envoyé à";
-	public static final String USER_DELETED_SUCCESSFULLY = "User was deleted successfully.";
+	public static final String USER_DELETED_SUCCESSFULLY = "Utilisateur supprimé avec succès.";
 	private UserService userService;
 	private AuthenticationManager authenticationManager;
 	private JwtTokenProvider jwtTokenProvider;
@@ -105,12 +98,11 @@ public class UserController extends ExceptionHandling {
 			@RequestParam("login") String login, @RequestParam("email") String email,
 			@RequestParam("adresse") String adresse, @RequestParam("telephone") String telephone,
 			@RequestParam("role") String role, @RequestParam("isActive") String isActive,
-			@RequestParam("isNonLocked") String isNonLocked,
 			@RequestParam(value = "profileImage", required = false) MultipartFile profileImage)
 			throws UserNotFoundException, EmailExistException, IOException, UsernameExistException,
 			NotAnImageFileException, MessagingException {
 		User newUser = userService.addNewUser(prenom, nom, login, email, adresse, telephone, role,
-				Boolean.parseBoolean(isActive), Boolean.parseBoolean(isNonLocked), profileImage);
+				Boolean.parseBoolean(isActive), profileImage);
 		return new ResponseEntity<User>(newUser, OK);
 
 	}
@@ -120,12 +112,12 @@ public class UserController extends ExceptionHandling {
 			@RequestParam("login") String login, @RequestParam("email") String email,
 			@RequestParam("adresse") String adresse, @RequestParam("telephone") String telephone,
 			@RequestParam("profession") String profession, @RequestParam("role") String role,
-			@RequestParam("isActive") String isActive, @RequestParam("isNonLocked") String isNonLocked,
+			@RequestParam("isActive") String isActive,
 			@RequestParam(value = "profileImage", required = false) MultipartFile profileImage)
 			throws UserNotFoundException, EmailExistException, IOException, UsernameExistException,
-			NotAnImageFileException {
+			NotAnImageFileException, MessagingException {
 		Alumni alum = userService.addNewAlumni(prenom, nom, login, email, adresse, telephone, profession, role,
-				Boolean.parseBoolean(isActive), Boolean.parseBoolean(isNonLocked), profileImage);
+				Boolean.parseBoolean(isActive), profileImage);
 		return new ResponseEntity<Alumni>(alum, OK);
 	}
 

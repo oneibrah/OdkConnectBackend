@@ -21,7 +21,6 @@ public class LignePromotion {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
-	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
 	private Date date = new Date();
 	@ManyToOne
 	private User user;

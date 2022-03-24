@@ -25,9 +25,7 @@ public class Promotion implements Serializable {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
 	private String libelle;
-	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
 	private Date dateDebut;
-	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
 	private Date datefin;
 	@OneToMany(mappedBy ="promotion")
 	@JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
