@@ -25,6 +25,7 @@ public class PromotionValidator {
 		if(promo.getDatefin() == null) {
 			errors.add("Veuillez renseigner la date de debut de la promotion");
 		}
+		
 		return errors;
 	}
 

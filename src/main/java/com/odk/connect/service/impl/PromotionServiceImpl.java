@@ -38,6 +38,7 @@ public class PromotionServiceImpl implements PromotionService {
 		if(!errors.isEmpty()) {
 			throw new PromotionException("promotion invalide");
 		}
+		
 //		if (promo.getLignePromotions() != null) {
 //			promo.getLignePromotions().forEach(ligPromo -> {
 //				if (ligPromo.getUser() != null) {

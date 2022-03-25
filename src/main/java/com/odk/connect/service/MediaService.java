@@ -6,6 +6,8 @@ import com.odk.connect.model.Media;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
+import java.time.LocalDate;
+import java.util.Date;
 import java.util.List;
 
 
@@ -13,12 +15,11 @@ import java.util.List;
 
 public interface MediaService {
 	 Media addMedia(String titre,Long idUser,MultipartFile mediaImage) throws ForumException, IOException, NotAnImageFileException;
-//	 List<Media>getAllMedia();
 	 List<Media>findAllMediaByUserId(Long id) throws ForumException;
 	 List<Media>findAllByAdminAndFormateur();
 	 List<Media>findAllByAlum();
-//    public Media ajoutMedia(Media media, MultipartFile photo) throws IOException;
-//    public byte[] getmedia(Long Id) throws IOException;
-//    public Void supprimerMedia(Long id);
-//    List<Media> afficherListemedia();
+	 List<Media>getMediaByWeek() throws ForumException;
+	 List<Media>getMediaByMonth() throws ForumException;
+	 List<Media>getMediaBetweenDate(LocalDate dateDebut, LocalDate dateFin);
+
 }

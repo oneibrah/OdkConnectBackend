@@ -2,9 +2,7 @@ package com.odk.connect.service.impl;
 
 import com.odk.connect.exception.model.ForumException;
 import com.odk.connect.exception.model.NotAnImageFileException;
-import com.odk.connect.model.FileUploadUtil;
 import com.odk.connect.model.Media;
-import com.odk.connect.model.Question;
 import com.odk.connect.model.User;
 import com.odk.connect.repository.MediaRepository;
 import com.odk.connect.repository.UserRepository;
@@ -24,9 +22,14 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.DayOfWeek;
+import java.time.LocalDate;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import static java.time.temporal.TemporalAdjusters.previousOrSame;
+import static java.time.temporal.TemporalAdjusters.nextOrSame;
 
 @Service
 @RequiredArgsConstructor
@@ -36,7 +39,7 @@ public class MediaServiceImpl implements MediaService {
 	private final UserRepository userRepository;
 
 	@Override
-	public Media addMedia(String titre,Long idUser, MultipartFile mediaImage)
+	public Media addMedia(String titre, Long idUser, MultipartFile mediaImage)
 			throws ForumException, IOException, NotAnImageFileException {
 		Optional<User> user = userRepository.findById(idUser);
 		if (user.isEmpty()) {
@@ -45,7 +48,7 @@ public class MediaServiceImpl implements MediaService {
 		}
 		Media media = new Media();
 		media.setTitre(titre);
-		media.setUser(user.get());		
+		media.setUser(user.get());
 		saveMediaImage(media, mediaImage);
 		return media;
 	}
@@ -53,10 +56,10 @@ public class MediaServiceImpl implements MediaService {
 	@Override
 	public List<Media> findAllMediaByUserId(Long id) throws ForumException {
 		List<Media> mediaUser = mediaRepository.findAllByUserId(id);
-		if (mediaUser.isEmpty()) {
-			LOGGER.error("Aucun media n'a été trouvé avec l'ID " + id);
-			throw new ForumException("cet utilisateur n'a pas encore ajouter de media");
-		}
+//		if (mediaUser.isEmpty()) {
+//			LOGGER.error("Aucun media n'a été trouvé avec l'ID " + id);
+//			throw new ForumException("cet utilisateur n'a pas encore ajouter de media");
+//		}
 		return mediaUser;
 	}
 
@@ -69,6 +72,38 @@ public class MediaServiceImpl implements MediaService {
 	public List<Media> findAllByAlum() {
 		return mediaRepository.findAllByAlum();
 	}
+
+	@Override
+	public List<Media> getMediaByWeek() throws ForumException {
+		LocalDate date = LocalDate.now();
+		LocalDate week = LocalDate.of(date.getYear(), date.getMonth(), date.getDayOfMonth());
+		LocalDate monday = week.with(previousOrSame(DayOfWeek.MONDAY));
+		LocalDate friday = week.with(nextOrSame(DayOfWeek.FRIDAY));
+		List<Media> media = mediaRepository.findByDateGreaterThanEqualAndDateLessThanEqual(monday, friday);
+		if(media.isEmpty()) {
+			throw new ForumException("aucun media  n'a été trouvé pour le weekend passé");
+		}
+		return media;
+	}
+
+	@Override
+	public List<Media> getMediaByMonth() throws ForumException {
+		LocalDate date = LocalDate.now();
+		LocalDate initial = LocalDate.of(date.getYear(), date.getMonth() , 1);
+		LocalDate start = initial.withDayOfMonth(1);
+		LocalDate end = initial.withDayOfMonth(initial.lengthOfMonth());
+		List<Media> media = mediaRepository.findByDateGreaterThanEqualAndDateLessThanEqual(start, end);
+		if(media.isEmpty()) {
+			throw new ForumException("aucun media n'a été trouvé pour le mois passé");
+		}
+		return media;
+	}
+
+	@Override
+	public List<Media> getMediaBetweenDate(LocalDate dateDebut, LocalDate dateFin) {
+		return mediaRepository.findByDateGreaterThanEqualAndDateLessThanEqual(dateDebut, dateFin);
+	}
+
 
 	private void saveMediaImage(Media media, MultipartFile mediaImage)
 			throws IOException, NotAnImageFileException, ForumException {
@@ -84,7 +119,7 @@ public class MediaServiceImpl implements MediaService {
 			}
 			String fileNameWithOutExt = FilenameUtils.removeExtension(mediaImage.getOriginalFilename());
 			Optional<Media> mediaOpt = mediaRepository.findByFileName(fileNameWithOutExt);
-			if (!mediaOpt.isEmpty()) {
+			if (mediaOpt.get().getId().equals(media.getUser().getId())) {
 				throw new ForumException("vous avez deja ajouter cet image dans la galerie");
 			}
 			Files.copy(mediaImage.getInputStream(), userFolder.resolve(fileNameWithOutExt + DOT + JPG_EXTENSION));
