@@ -1,6 +1,5 @@
 package com.odk.connect.controller;
 
-import com.odk.connect.constants.fileConstant;
 import com.odk.connect.exception.model.ForumException;
 import com.odk.connect.exception.model.NotAnImageFileException;
 import com.odk.connect.exception.model.UsernameExistException;
@@ -23,6 +22,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 @RestController
+@CrossOrigin(origins = "*")
 @RequiredArgsConstructor
 @RequestMapping("/odkConnect/forum/response")
 public class ReponseController {
@@ -47,6 +47,11 @@ public class ReponseController {
 	public ResponseEntity<List<Reponse>> findAllReponseByQuiz(@PathVariable("idQuiz") Long idQuiz)
 			throws ForumException {
 		List<Reponse> response = responseService.findAllReponseByQuizId(idQuiz);
+		return new ResponseEntity<List<Reponse>>(response, OK);
+	}
+	@GetMapping("/listResponse")
+	public ResponseEntity<List<Reponse>> findAllReponse() {
+		List<Reponse> response = responseService.findAllResponse();
 		return new ResponseEntity<List<Reponse>>(response, OK);
 	}
 

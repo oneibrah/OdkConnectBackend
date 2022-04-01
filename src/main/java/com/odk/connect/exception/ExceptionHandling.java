@@ -119,11 +119,11 @@ public class ExceptionHandling implements ErrorController {
 		return createHttpResponse(HttpStatus.METHOD_NOT_ALLOWED, String.format(METHOD_IS_NOT_ALLOWED, supportedMethod));
 	}
 
-//	@ExceptionHandler(Exception.class)
-//	public ResponseEntity<HttpResponse> internalServerErrorException(Exception exception) {
-//		LOGGER.error(exception.getMessage());
-//		return createHttpResponse(HttpStatus.INTERNAL_SERVER_ERROR, INTERNAL_SERVER_ERROR_MSG);
-//	}
+	@ExceptionHandler(Exception.class)
+	public ResponseEntity<HttpResponse> internalServerErrorException(Exception exception) {
+		LOGGER.error(exception.getMessage());
+		return createHttpResponse(HttpStatus.INTERNAL_SERVER_ERROR, INTERNAL_SERVER_ERROR_MSG);
+	}
 
 	@ExceptionHandler(NoResultException.class)
 	public ResponseEntity<HttpResponse> notFoundException(NoResultException exception) {
@@ -142,13 +142,13 @@ public class ExceptionHandling implements ErrorController {
 				httpStatus.getReasonPhrase().toUpperCase(), message.toUpperCase()), httpStatus);
 	}
 
-//	@RequestMapping(ERROR_PATH)
-//	public ResponseEntity<HttpResponse> notFound404() {
-//		return createHttpResponse(HttpStatus.NOT_FOUND, "Il n'y a pas de mappage pour cette URL");
-//	}
-//
-//	public String getErrorPath() {
-//		return ERROR_PATH;
-//	}
+	@RequestMapping(ERROR_PATH)
+	public ResponseEntity<HttpResponse> notFound404() {
+		return createHttpResponse(HttpStatus.NOT_FOUND, "Il n'y a pas de mappage pour cette URL");
+	}
+
+	public String getErrorPath() {
+		return ERROR_PATH;
+	}
 
 }

@@ -10,4 +10,5 @@ import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 @RepositoryRestResource
 public interface ReponseRepository extends JpaRepository<Reponse, Long> {
 	List<Reponse>findAllReponseByQuizId(Long id);
+	
 }

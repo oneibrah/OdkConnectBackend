@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -47,6 +48,7 @@ import static com.odk.connect.constants.fileConstant.*;
 import com.odk.connect.exception.ExceptionHandling;
 
 @RestController
+@CrossOrigin(origins = "*")
 @RequestMapping(path = { "/", "/odkConnect/user" })
 public class UserController extends ExceptionHandling {
 	public static final String EMAIL_SENT = "Un e-mail avec un nouveau mot de passe a été envoyé à";

@@ -20,6 +20,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 @RestController
+@CrossOrigin(origins = "*")
 @RequiredArgsConstructor
 @RequestMapping("/odkConnect/media/")
 public class MediaController extends ExceptionHandling {
@@ -67,7 +68,10 @@ public class MediaController extends ExceptionHandling {
 	ResponseEntity<List<Media>> getMediaByMonth() throws ForumException {
 		return ResponseEntity.ok(mediaService.getMediaByMonth());
 	}
-
+	@GetMapping("/listAll")
+	ResponseEntity<List<Media>> findAllMedia() throws ForumException {
+		return ResponseEntity.ok(mediaService.findAllMedia());
+	}
 	@GetMapping("/MediaBeetween/{dateDebut}&{dateFin}")
 	ResponseEntity<List<Media>> getMediaBetweenDate(
 			@PathVariable("dateDebut") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate dateDebut,

@@ -16,7 +16,7 @@ public interface ReponseService {
 			throws ForumException, IOException, NotAnImageFileException;
 
 	List<Reponse> findAllReponseByQuizId(Long id) throws ForumException;
-
+	List<Reponse>findAllResponse();
 	Reponse updateResponse(Long idResponse, String description, MultipartFile responseImage)
 			throws ForumException, IOException, NotAnImageFileException;
 

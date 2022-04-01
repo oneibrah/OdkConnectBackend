@@ -12,8 +12,10 @@
 	<groupId>com.odkConnect</groupId>
 	<artifactId>ODKCONNECT</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
+	<packaging>war</packaging>
 	<name>ODKCONNECT</name>
-	<description>plateforme de mise en relation des promotions odk</description>
+	<description>plateforme de mise en relation des promotions odk
+	</description>
 	<properties>
 		<java.version>11</java.version>
 	</properties>
@@ -65,6 +67,13 @@
 			<artifactId>mysql-connector-java</artifactId>
 			<scope>runtime</scope>
 		</dependency>
+		<!-- deployment -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-tomcat</artifactId>
+			<scope>provided</scope>
+		</dependency>
+		<!-- end deployment -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>

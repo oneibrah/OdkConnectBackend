@@ -9,18 +9,19 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
-
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 @Entity
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Promotion implements Serializable {
+//@EqualsAndHashCode(callSuper = true)
+public class Promotion {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;

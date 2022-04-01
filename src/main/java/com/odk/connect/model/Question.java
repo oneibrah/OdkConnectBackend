@@ -3,6 +3,7 @@ package com.odk.connect.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
@@ -16,6 +17,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
+//@EqualsAndHashCode(callSuper = true)
 public class Question {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

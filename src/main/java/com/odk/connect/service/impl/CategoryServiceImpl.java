@@ -50,9 +50,9 @@ public class CategoryServiceImpl implements CategoryService {
 //	}
 
 	@Override
-	public CategoryForum ajouterCategory(String libelle, Long idUser, MultipartFile categoryImage)
+	public CategoryForum ajouterCategory(String libelleCat, Long idUser, MultipartFile categoryImage)
 			throws ForumException, IOException, NotAnImageFileException {
-		Optional<CategoryForum> cat = categoryRepository.findByLibelle(libelle);
+		Optional<CategoryForum> cat = categoryRepository.findByLibelleCat(libelleCat);
 		if (cat.isPresent()) {
 			throw new ForumException("cette categorie de discussion existe deja");
 		}
@@ -61,7 +61,7 @@ public class CategoryServiceImpl implements CategoryService {
 		if (user.isEmpty()) {
 			throw new ForumException("Aucun utilisateur n'a été trouvé avec l'id" + idUser);
 		}
-		cateForum.setLibelle(libelle);
+		cateForum.setLibelleCat(libelleCat);
 		cateForum.setUser(user.get());
 		categoryRepository.save(cateForum);
 		saveCategoryImage(cateForum, categoryImage);

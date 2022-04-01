@@ -30,8 +30,9 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-@CrossOrigin
+
 @RestController
+@CrossOrigin(origins = "*")
 @RequestMapping("/odkConnect/forum/category")
 @RequiredArgsConstructor
 public class CategoryController extends ExceptionHandling {
@@ -39,7 +40,7 @@ public class CategoryController extends ExceptionHandling {
 	private final CategoryService categoryService;
 
 	@PostMapping("/SaveCategoryFroum")
-	public ResponseEntity<CategoryForum> ajouterCategory(@RequestParam("libelle") String description,
+	public ResponseEntity<CategoryForum> ajouterCategory(@RequestParam("libelleCat") String description,
 			@RequestParam("id") Long idUser,
 			@RequestParam(value = "categoryImage", required = false) MultipartFile categoryImage)
 			throws ForumException, IOException, NotAnImageFileException {

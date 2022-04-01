@@ -9,6 +9,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -32,6 +33,7 @@ import com.odk.connect.service.PromotionService;
 import lombok.RequiredArgsConstructor;
 
 @RestController
+@CrossOrigin(origins = "*")
 @RequestMapping(path = { "/", "/odkConnect/lignePromo" })
 @RequiredArgsConstructor
 public class LignePromotionController extends ExceptionHandling{

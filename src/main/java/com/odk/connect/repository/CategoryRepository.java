@@ -10,6 +10,6 @@ import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 
 @RepositoryRestResource
 public interface CategoryRepository extends JpaRepository<CategoryForum, Long> {
-	Optional<CategoryForum> findByLibelle(String libelle);
+	Optional<CategoryForum> findByLibelleCat(String libelle);
 
 }

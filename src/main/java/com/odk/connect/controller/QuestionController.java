@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 @RestController
+@CrossOrigin(origins = "*")
 @RequestMapping("/odkConnect/forum/quiz")
 @RequiredArgsConstructor
 public class QuestionController extends ExceptionHandling {

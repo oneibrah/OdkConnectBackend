@@ -2,6 +2,9 @@ package com.odk.connect.model;
 
 import java.util.Date;
 import javax.persistence.OneToMany;
+
+import org.springframework.data.domain.AuditorAware;
+
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.DiscriminatorType;
@@ -17,12 +20,14 @@ import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 @Entity
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+//@EqualsAndHashCode(callSuper = true)
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "type", discriminatorType = DiscriminatorType.STRING, length = 4)
 //@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "type")
@@ -52,9 +57,8 @@ public class User {
 	private String[] authorities;
 	private boolean isActive;
 	private boolean isNonLocked;
-	@OneToMany(mappedBy ="user")
+	@OneToMany(mappedBy = "user")
 	@JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
 	private List<LignePromotion> lignePromotions;
-	
-	
+
 }

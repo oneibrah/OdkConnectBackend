@@ -77,6 +77,10 @@ public class ReponseServiceImpl implements ReponseService {
 	public List<Reponse> findAllReponseByQuizId(Long id) throws ForumException {
 		return responseRepository.findAllReponseByQuizId(id);
 	}
+	@Override
+	public List<Reponse> findAllResponse() {
+		return responseRepository.findAll();
+	}
 
 	@Override
 	public void supprimerReponse(Long id) {
@@ -107,5 +111,7 @@ public class ReponseServiceImpl implements ReponseService {
 		}
 
 	}
+
+	
 
 }

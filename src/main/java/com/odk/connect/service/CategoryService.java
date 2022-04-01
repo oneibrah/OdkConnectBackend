@@ -11,7 +11,7 @@ import com.odk.connect.exception.model.NotAnImageFileException;
 import com.odk.connect.model.CategoryForum;
 
 public interface CategoryService {
-    CategoryForum ajouterCategory(String libelle,Long idUser,MultipartFile categoryImage) throws ForumException, IOException, NotAnImageFileException;
+    CategoryForum ajouterCategory(String libelleCat,Long idUser,MultipartFile categoryImage) throws ForumException, IOException, NotAnImageFileException;
     List<CategoryForum>getAllCateforum();
     void supprimerCategory(Long id) throws ForumException;
 }

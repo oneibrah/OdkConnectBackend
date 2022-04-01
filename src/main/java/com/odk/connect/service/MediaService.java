@@ -18,8 +18,8 @@ public interface MediaService {
 	 List<Media>findAllMediaByUserId(Long id) throws ForumException;
 	 List<Media>findAllByAdminAndFormateur();
 	 List<Media>findAllByAlum();
+	 List<Media>findAllMedia();
 	 List<Media>getMediaByWeek() throws ForumException;
 	 List<Media>getMediaByMonth() throws ForumException;
 	 List<Media>getMediaBetweenDate(LocalDate dateDebut, LocalDate dateFin);
-
 }

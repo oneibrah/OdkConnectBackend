@@ -37,7 +37,7 @@ public class MediaServiceImpl implements MediaService {
 	private Logger LOGGER = LoggerFactory.getLogger(getClass());
 	private final MediaRepository mediaRepository;
 	private final UserRepository userRepository;
-
+	int counter =0;
 	@Override
 	public Media addMedia(String titre, Long idUser, MultipartFile mediaImage)
 			throws ForumException, IOException, NotAnImageFileException {
@@ -62,6 +62,10 @@ public class MediaServiceImpl implements MediaService {
 //		}
 		return mediaUser;
 	}
+	@Override
+	public List<Media> findAllMedia() {
+		return mediaRepository.findAll();
+	}
 
 	@Override
 	public List<Media> findAllByAdminAndFormateur() {
@@ -81,7 +85,7 @@ public class MediaServiceImpl implements MediaService {
 		LocalDate friday = week.with(nextOrSame(DayOfWeek.FRIDAY));
 		List<Media> media = mediaRepository.findByDateGreaterThanEqualAndDateLessThanEqual(monday, friday);
 		if(media.isEmpty()) {
-			throw new ForumException("aucun media  n'a été trouvé pour le weekend passé");
+			throw new ForumException("aucun media  n'a été trouvé dans le weekend ");
 		}
 		return media;
 	}
@@ -94,7 +98,7 @@ public class MediaServiceImpl implements MediaService {
 		LocalDate end = initial.withDayOfMonth(initial.lengthOfMonth());
 		List<Media> media = mediaRepository.findByDateGreaterThanEqualAndDateLessThanEqual(start, end);
 		if(media.isEmpty()) {
-			throw new ForumException("aucun media n'a été trouvé pour le mois passé");
+			throw new ForumException("aucun media n'a été trouvé dans le mois ");
 		}
 		return media;
 	}
@@ -118,9 +122,15 @@ public class MediaServiceImpl implements MediaService {
 				LOGGER.info(DIRECTORY_CREATED + userFolder);
 			}
 			String fileNameWithOutExt = FilenameUtils.removeExtension(mediaImage.getOriginalFilename());
-			Optional<Media> mediaOpt = mediaRepository.findByFileName(fileNameWithOutExt);
-			if (mediaOpt.get().getId().equals(media.getUser().getId())) {
-				throw new ForumException("vous avez deja ajouter cet image dans la galerie");
+			List<Media> mediaOpt = mediaRepository.findByFileName(media.getUser().getId(), fileNameWithOutExt);
+			mediaOpt.forEach(m->{
+				if(m.getUser().getId().equals(media.getUser().getId())) {
+					counter +=1;
+				}
+			});
+			if(counter != 0) {
+				counter = 0;
+				throw new ForumException("Vous avez déja ajouté cette image");				
 			}
 			Files.copy(mediaImage.getInputStream(), userFolder.resolve(fileNameWithOutExt + DOT + JPG_EXTENSION));
 			media.setPhotoUrl(ServletUriComponentsBuilder.fromCurrentContextPath().path(MEDIA_IMAGE_PATH
@@ -132,6 +142,8 @@ public class MediaServiceImpl implements MediaService {
 		}
 
 	}
+
+	
 
 //    @Override
 //    public Media ajoutMedia(Media media, @RequestParam("photo") MultipartFile multipartFilePhoto) throws IOException {

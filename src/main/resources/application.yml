@@ -2,23 +2,22 @@ jwt:
   secret: '2DD38FB915C03B157CA57D7A76055534EF5B8F97A4E1BFE90975B07D6ED34392'
 server:
   port: 8082
-#  error:
-#    whitelabel:
-#      enabled: false
+
 spring:
   datasource:
-    url: jdbc:mysql://localhost:3306/db_odkConnect?createDatabaseIfNotExist=true&userSSL=false&useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC
-    password: 
+    url: jdbc:mysql://localhost:3306/db_odkConnect
+
+    password: 692orlR7mLMO
     username: root
   jpa:
     show-sql: true
     hibernate:
       ddl-auto: update
+      
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MySQL8Dialect
+ 
   mvc:
     throw-exception-if-no-handler-found: true
-#  web:
-#    resources:
-#      add-mappings: false
+  
