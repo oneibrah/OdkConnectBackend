@@ -94,8 +94,8 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 		user.setPassword(encodePassword(password));
 		user.setActive(true);
 		user.setNonLocked(true);
-		user.setRole(ROLE_FORMATEUR.name());
-		user.setAuthorities(ROLE_FORMATEUR.getAuthorities());
+		user.setRole(ROLE_ADMIN.name());
+		user.setAuthorities(ROLE_ADMIN.getAuthorities());
 		user.setProfileImageUrl(getTempraryProfileIamgeUrl(login));
 		userRepository.save(user);
 		LOGGER.info("New user password: " + password);
@@ -317,6 +317,9 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 			LOGGER.warn("Aucun utilisateur n'a ete trouve avec l'ID " + mdp.getId());
 			throw new MotDePasseException(NO_USER_FOUND_BY_ID + mdp.getId());
 		}
+		if(userOptionnal.get().getPassword() != encodePassword(mdp.getAncienmotdepasse())) {
+			throw new MotDePasseException("votre ancien mot de passe n'est pas valide");
+		}
 		User user = userOptionnal.get();
 		user.setPassword(encodePassword(mdp.getMotDePasse()));
 		return userRepository.save(user);
@@ -343,6 +346,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 			LOGGER.warn("Impossible de modifier le mot de passe avec un objet NULL");
 			throw new MotDePasseException(IMPOSSIBLE_TO_CHANGE_PASSWORD);
 		}
+		
 		if (StringUtils.isBlank(mdp.getMotDePasse()) || StringUtils.isBlank(mdp.getConfirmeMotDePasse())) {
 			LOGGER.warn("Impossible de modifier le mot de passe avec un mot de passe NULL");
 			throw new MotDePasseException(PASSWORD_NUL);
